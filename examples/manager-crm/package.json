@@ -1,0 +1,29 @@
+{
+  "name": "manager-crm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.11.0",
+  "scripts": {
+    "loom": "loom",
+    "dev": "pnpm --parallel --filter './apps/*' dev",
+    "generate": "loom generate",
+    "verify": "loom verify",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc --noEmit",
+    "build": "pnpm generate && pnpm -r --filter './apps/*' build"
+  },
+  "devDependencies": {
+    "@loom/cli": "^0.1.0",
+    "@loom/react": "^0.1.0",
+    "@loom/runtime": "^0.1.0",
+    "@loom/sqlite": "^0.1.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
+  }
+}

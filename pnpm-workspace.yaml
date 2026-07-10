@@ -1,0 +1,10 @@
+packages:
+  - packages/*
+  - examples/*
+  - examples/*/apps/*
+
+allowBuilds:
+  esbuild: true
+
+linkWorkspacePackages: true
+preferWorkspacePackages: true

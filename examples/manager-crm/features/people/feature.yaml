@@ -1,0 +1,21 @@
+id: people
+name: People
+description: Manage people and relationship context.
+
+entities:
+  - Person
+
+routes:
+  - id: people-list
+    path: /people
+    view: PeopleListView
+
+actions:
+  - createPerson
+
+queries:
+  - listPeople
+
+permissions:
+  read: authenticated
+  write: owner

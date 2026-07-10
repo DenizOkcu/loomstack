@@ -1,0 +1,10 @@
+{
+  "name": "@loom/create-app",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": { "create-loom-app": "./dist/index.js" },
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist"],
+  "scripts": { "build": "tsup src/index.ts --format esm --dts --clean", "test": "vitest run" },
+  "dependencies": { "@loom/generator": "workspace:*" }
+}

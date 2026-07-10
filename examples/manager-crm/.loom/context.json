@@ -1,0 +1,49 @@
+{
+  "generatedBy": "loom",
+  "doNotEdit": true,
+  "project": {
+    "name": "manager-crm",
+    "frontend": "react",
+    "backend": "koa",
+    "database": "sqlite",
+    "packageManager": "pnpm"
+  },
+  "paths": {
+    "features": "features",
+    "web": "apps/web",
+    "api": "apps/api"
+  },
+  "commands": {
+    "dev": "pnpm dev",
+    "verify": "pnpm loom verify",
+    "test": "pnpm test",
+    "typecheck": "pnpm typecheck"
+  },
+  "features": [
+    "commitments",
+    "people",
+    "projects"
+  ],
+  "rules": [
+    {
+      "id": "feature-source-of-truth",
+      "description": "Product behavior lives in features/*.",
+      "errorCode": null
+    },
+    {
+      "id": "no-db-in-ui",
+      "description": "React UI files may not import database code.",
+      "errorCode": "loom2001"
+    },
+    {
+      "id": "no-fetch-in-ui",
+      "description": "React UI files may not call raw fetch.",
+      "errorCode": "loom2002"
+    },
+    {
+      "id": "transport-independent-features",
+      "description": "Feature logic may not import Koa.",
+      "errorCode": "loom2003"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+id: commitments
+name: Commitments
+description: Track owned commitments and due dates.
+
+entities:
+  - Commitment
+
+routes:
+  - id: commitments-list
+    path: /commitments
+    view: CommitmentsListView
+
+actions:
+  - createCommitment
+
+queries:
+  - listCommitments
+  - listCommitmentsDueSoon
+
+permissions:
+  read: authenticated
+  write: owner

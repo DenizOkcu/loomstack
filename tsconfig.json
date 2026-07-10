@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "jsx": "react-jsx",
+    "paths": {
+      "@loom/core": ["./packages/core/src/index.ts"],
+      "@loom/runtime": ["./packages/runtime/src/index.ts"],
+      "@loom/generator": ["./packages/generator/src/index.ts"],
+      "@loom/verifier": ["./packages/verifier/src/index.ts"],
+      "@loom/react": ["./packages/react-adapter/src/index.tsx"],
+      "@loom/koa": ["./packages/koa-adapter/src/index.ts"],
+      "@loom/sqlite": ["./packages/sqlite-adapter/src/index.ts"]
+    }
+  },
+  "include": ["packages/**/*.ts", "packages/**/*.tsx", "vitest.config.ts"],
+  "exclude": ["**/dist", "**/node_modules"]
+}

@@ -1,0 +1,21 @@
+id: projects
+name: Projects
+description: Track projects, status, and risk.
+
+entities:
+  - Project
+
+routes:
+  - id: projects-list
+    path: /projects
+    view: ProjectsListView
+
+actions:
+  - createProject
+
+queries:
+  - listProjects
+
+permissions:
+  read: authenticated
+  write: owner

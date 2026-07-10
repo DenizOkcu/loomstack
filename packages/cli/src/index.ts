@@ -1,0 +1,256 @@
+#!/usr/bin/env node
+import { spawnSync } from "node:child_process"
+import { existsSync } from "node:fs"
+import { relative, resolve } from "node:path"
+import { pathToFileURL } from "node:url"
+import { Command, CommanderError } from "commander"
+import {
+  discoverProjectRoot,
+  ERROR_CATALOG,
+  explainError,
+  frameworkError,
+  scanProject,
+  toProjectPath
+} from "@loom/core"
+import type { FrameworkError, LoomProject, ScannedFeature } from "@loom/core"
+import { createApp, createFeature, generateProject, GeneratorFailure } from "@loom/generator"
+import { verifyProject } from "@loom/verifier"
+
+export interface CliIO {
+  stdout: (text: string) => void
+  stderr: (text: string) => void
+}
+
+interface GlobalOptions {
+  json?: boolean
+  cwd?: string
+  quiet?: boolean
+  verbose?: boolean
+}
+
+function errorsFrom(error: unknown): FrameworkError[] {
+  if (error instanceof GeneratorFailure) return error.errors
+  return [frameworkError("loom5003", { message: error instanceof Error ? error.message : String(error) })]
+}
+
+function projectRoot(cwd: string): string {
+  const root = discoverProjectRoot(cwd)
+  if (!root) throw new GeneratorFailure([frameworkError("loom5001", { file: "loom.config.ts" })])
+  return root
+}
+
+function projectOrThrow(root: string): LoomProject {
+  const result = scanProject(root)
+  if (!result.project || result.errors.length) throw new GeneratorFailure(result.errors)
+  return result.project
+}
+
+function projectContext(project: LoomProject) {
+  return {
+    project: {
+      name: project.config.appName,
+      frontend: project.config.frontend,
+      backend: project.config.backend,
+      database: project.config.database,
+      packageManager: project.config.packageManager
+    },
+    commands: { dev: "pnpm dev", verify: "pnpm loom verify", test: "pnpm test", typecheck: "pnpm typecheck" },
+    features: project.features.map((feature) => feature.id),
+    rules: [
+      "Product behavior lives in features/*/actions or features/*/queries.",
+      "React views may not import database code or call raw fetch.",
+      "Feature logic may not import Koa.",
+      "Generated files must never be edited manually."
+    ]
+  }
+}
+
+function featureContext(feature: ScannedFeature) {
+  return {
+    feature: feature.id,
+    manifest: feature.manifestPath,
+    description: feature.manifest.description ?? "",
+    entities: feature.manifest.entities,
+    actions: feature.actions,
+    queries: feature.queries,
+    views: feature.views,
+    tests: feature.tests,
+    rules: [
+      "Mutations belong in actions/*.action.ts.",
+      "Reads belong in queries/*.query.ts.",
+      "Do not access the database or raw fetch from UI files.",
+      `Verify with pnpm loom verify feature ${feature.id} --json.`
+    ]
+  }
+}
+
+function affected(project: LoomProject, fileInput: string) {
+  const absolute = resolve(project.root, fileInput)
+  const file = toProjectPath(relative(project.root, absolute))
+  const feature = project.features.find((candidate) => file === candidate.directory || file.startsWith(`${candidate.directory}/`))
+  if (!feature) {
+    return {
+      file,
+      feature: null,
+      affected: project.features.flatMap((candidate) => [candidate.manifestPath]),
+      recommendedVerification: "pnpm loom verify"
+    }
+  }
+  const authored = [
+    feature.manifestPath,
+    `${feature.directory}/model.schema.ts`,
+    `${feature.directory}/permissions.policy.ts`,
+    ...feature.actions.map((item) => item.file),
+    ...feature.queries.map((item) => item.file),
+    ...feature.views.map((item) => item.file),
+    ...feature.tests
+  ].filter((path, index, all) => path !== file && all.indexOf(path) === index).sort()
+  return {
+    file,
+    feature: feature.id,
+    affected: authored,
+    recommendedVerification: `pnpm loom verify feature ${feature.id}`
+  }
+}
+
+function humanErrors(errors: FrameworkError[]): string {
+  return errors.map((error) => [
+    `${error.code}: ${error.message}`,
+    error.file ? `  File: ${error.file}` : undefined,
+    `  Repair: ${error.repair}`
+  ].filter(Boolean).join("\n")).join("\n")
+}
+
+export async function runCli(argv: string[], io: CliIO = {
+  stdout: (text) => process.stdout.write(text),
+  stderr: (text) => process.stderr.write(text)
+}): Promise<number> {
+  let exitCode = 0
+  const program = new Command()
+  program
+    .name("loom")
+    .description("Agent-operable fullstack framework")
+    .version("0.1.0")
+    .option("--json", "emit machine-readable JSON")
+    .option("--cwd <path>", "run against a specific path")
+    .option("--quiet", "suppress human success output")
+    .option("--verbose", "include diagnostics")
+    .exitOverride()
+    .configureOutput({ writeOut: io.stdout, writeErr: io.stderr })
+
+  function globals(): GlobalOptions {
+    return program.opts<GlobalOptions>()
+  }
+
+  function cwd(): string {
+    return resolve(globals().cwd ?? process.cwd())
+  }
+
+  function emit(payload: Record<string, unknown>, human: string, failure = false): void {
+    if (failure) exitCode = 1
+    if (globals().json) io.stdout(`${JSON.stringify(payload, null, 2)}\n`)
+    else if (!globals().quiet || failure) io[failure ? "stderr" : "stdout"](`${human}\n`)
+  }
+
+  async function execute(run: () => Record<string, unknown> | Promise<Record<string, unknown>>, human: (result: Record<string, unknown>) => string): Promise<void> {
+    try {
+      const result = await run()
+      emit({ ok: true, ...result }, human(result))
+    } catch (error) {
+      const errors = errorsFrom(error)
+      emit({ ok: false, errors }, humanErrors(errors), true)
+    }
+  }
+
+  const create = program.command("create").description("create canonical loom resources")
+  create.command("app <name>").description("create a loom application").action(async (name: string) => {
+    await execute(() => ({ ...createApp(cwd(), name) }), (result) => `Created loom app: ${result.appName as string}\nNext steps:\n  ${(result.nextCommands as string[]).join("\n  ")}`)
+  })
+  create.command("feature <name>").description("create a canonical feature").action(async (name: string) => {
+    await execute(() => {
+      const root = projectRoot(cwd())
+      const result = createFeature(root, name)
+      generateProject(root)
+      return { feature: name, ...result }
+    }, (result) => `Created feature: ${result.feature as string}`)
+  })
+
+  program.command("generate").description("regenerate all derived files").action(async () => {
+    await execute(() => ({ ...generateProject(projectRoot(cwd())) }), (result) => `Generated ${(result.generatedFiles as string[]).length} files.`)
+  })
+
+  const context = program.command("context").description("show agent-readable project context")
+  context.action(async () => {
+    await execute(() => projectContext(projectOrThrow(projectRoot(cwd()))), () => {
+      const project = projectOrThrow(projectRoot(cwd()))
+      return `loom project: ${project.config.appName}\nFeatures: ${project.features.map((feature) => feature.id).join(", ") || "none"}`
+    })
+  })
+  context.command("feature <name>").description("show context for one feature").action(async (name: string) => {
+    await execute(() => {
+      const project = projectOrThrow(projectRoot(cwd()))
+      const feature = project.features.find((candidate) => candidate.id === name)
+      if (!feature) throw new GeneratorFailure([frameworkError("loom1002", { message: `Unknown feature: ${name}.` })])
+      return featureContext(feature)
+    }, (result) => `Feature: ${result.feature as string}\nManifest: ${result.manifest as string}`)
+  })
+
+  program.command("graph").description("show the feature graph").action(async () => {
+    await execute(() => projectOrThrow(projectRoot(cwd())).graph as unknown as Record<string, unknown>, () => "Feature graph generated.")
+  })
+
+  program.command("affected <file>").description("show likely affected files").action(async (file: string) => {
+    await execute(() => affected(projectOrThrow(projectRoot(cwd())), file), (result) => `Affected files for ${result.file as string}:\n${(result.affected as string[]).map((path) => `  ${path}`).join("\n")}`)
+  })
+
+  const verify = program.command("verify").description("verify architecture and generated contracts")
+  verify.action(async () => {
+    const result = verifyProject(projectRoot(cwd()))
+    emit(result as unknown as Record<string, unknown>, result.ok ? "Verification passed." : humanErrors(result.errors), !result.ok)
+  })
+  verify.command("feature <name>").description("verify one feature").action(async (name: string) => {
+    const result = verifyProject(projectRoot(cwd()), { feature: name })
+    emit(result as unknown as Record<string, unknown>, result.ok ? `Feature ${name} passed verification.` : humanErrors(result.errors), !result.ok)
+  })
+
+  program.command("explain <code>").description("explain a stable loom error code").action(async (code: string) => {
+    await execute(() => {
+      const explanation = explainError(code)
+      if (!explanation) throw new GeneratorFailure([frameworkError("loom5003", { message: `Unknown error code: ${code}.` })])
+      return explanation
+    }, (result) => `${result.code as string}: ${result.title as string}\n${result.why as string}\nRepair: ${result.repair as string}`)
+  })
+
+  program.command("doctor").description("check the local loom environment").action(async () => {
+    await execute(() => {
+      const root = discoverProjectRoot(cwd())
+      const pnpm = spawnSync("pnpm", ["--version"], { encoding: "utf8" })
+      const checks = {
+        node: { ok: Number(process.versions.node.split(".")[0]) >= 22, version: process.versions.node },
+        pnpm: { ok: pnpm.status === 0, version: pnpm.stdout.trim() || null },
+        config: { ok: Boolean(root), path: root ? toProjectPath(relative(cwd(), resolve(root, "loom.config.ts"))) || "loom.config.ts" : null },
+        typescript: { ok: root ? existsSync(resolve(root, "tsconfig.json")) : false }
+      }
+      return { healthy: Object.values(checks).every((check) => check.ok), checks }
+    }, (result) => (result.healthy ? "loom doctor found no problems." : "loom doctor found environment problems."))
+  })
+
+  try {
+    await program.parseAsync(argv, { from: "user" })
+  } catch (error) {
+    if (error instanceof CommanderError && ["commander.helpDisplayed", "commander.version"].includes(error.code)) return exitCode
+    const errors = errorsFrom(error)
+    emit({ ok: false, errors }, humanErrors(errors), true)
+  }
+  return exitCode
+}
+
+const invokedPath = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : ""
+if (import.meta.url === invokedPath) {
+  runCli(process.argv.slice(2)).then((code) => { process.exitCode = code }).catch((error) => {
+    console.error(error)
+    process.exitCode = 1
+  })
+}
+
+export { ERROR_CATALOG }

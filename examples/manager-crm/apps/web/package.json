@@ -1,0 +1,18 @@
+{
+  "name": "@manager-crm/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "dependencies": {
+    "@loom/react": "^0.1.0",
+    "@loom/runtime": "^0.1.0",
+    "@vitejs/plugin-react": "^6.0.3",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "vite": "^8.1.4"
+  }
+}
