@@ -12,7 +12,7 @@ export default defineConfig({
       "@loom/verifier": `${root}packages/verifier/src/index.ts`,
       "@loom/react": `${root}packages/react-adapter/src/index.tsx`,
       "@loom/koa": `${root}packages/koa-adapter/src/index.ts`,
-      "@loom/sqlite": `${root}packages/sqlite-adapter/src/index.ts`
+      "@loom/postgres": `${root}packages/postgres-adapter/src/index.ts`
     }
   },
   test: {

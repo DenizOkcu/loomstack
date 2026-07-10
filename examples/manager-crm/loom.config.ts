@@ -5,7 +5,7 @@ export default defineLoomConfig({
   packageManager: "pnpm",
   frontend: "react",
   backend: "koa",
-  database: "sqlite",
+  database: "postgres",
   featuresDir: "features",
   generatedDir: ".loom"
 })

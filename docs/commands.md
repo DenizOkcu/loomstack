@@ -54,7 +54,7 @@ Returns the owning feature, all likely related authored contracts, and the recom
 
 ### `loom explain <code>`
 
-Returns the stable error title, reason, repair, and documentation reference. Code ranges are: `loom1xxx` manifests, `loom2xxx` boundaries, `loom3xxx` runtime, `loom4xxx` generation, `loom5xxx` project/CLI, and `loom6xxx` SQLite schema concerns.
+Returns the stable error title, reason, repair, and documentation reference. Code ranges are: `loom1xxx` manifests, `loom2xxx` boundaries, `loom3xxx` runtime, `loom4xxx` generation, `loom5xxx` project/CLI, and `loom6xxx` PostgreSQL schema concerns.
 
 ## Environment
 

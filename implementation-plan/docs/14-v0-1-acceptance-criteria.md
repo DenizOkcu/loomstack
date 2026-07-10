@@ -28,7 +28,7 @@ Generated app uses:
 - pnpm
 - React + Vite
 - Koa
-- SQLite or in-memory SQLite-compatible adapter
+- PostgreSQL or in-memory PostgreSQL-compatible adapter
 - Vitest
 
 ## Required generated structure

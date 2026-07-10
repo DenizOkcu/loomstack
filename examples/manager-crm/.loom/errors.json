@@ -124,11 +124,11 @@
     },
     "loom5003": {
       "title": "Invalid project configuration",
-      "repair": "Use React, Koa, SQLite, pnpm, and explicit featuresDir/generatedDir values.",
+      "repair": "Use React, Koa, PostgreSQL, pnpm, and explicit featuresDir/generatedDir values.",
       "docs": "implementation-plan/docs/02-repository-structure.md"
     },
     "loom6001": {
-      "title": "Unsupported SQLite field",
+      "title": "Unsupported PostgreSQL field",
       "repair": "Use a supported scalar field or provide explicit persistence logic.",
       "docs": "implementation-plan/docs/04-schema-and-domain-layer.md"
     }

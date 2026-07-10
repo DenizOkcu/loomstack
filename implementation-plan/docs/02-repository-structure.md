@@ -80,7 +80,7 @@ loom/
         errors/
       tests/
 
-    sqlite-adapter/
+    postgres-adapter/
       package.json
       src/
         db/
@@ -185,7 +185,7 @@ export default defineloomConfig({
   packageManager: "pnpm",
   frontend: "react",
   backend: "koa",
-  database: "sqlite",
+  database: "postgres",
   featuresDir: "features",
   generatedDir: ".loom"
 })

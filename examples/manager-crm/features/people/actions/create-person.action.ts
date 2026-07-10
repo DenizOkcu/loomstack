@@ -1,5 +1,5 @@
 import { action, schema, text } from "@loom/runtime"
-import type { MemoryDatabase } from "@loom/sqlite"
+import type { Database } from "@loom/postgres"
 import { PersonSchema } from "../model.schema.js"
 
 export const CreatePersonInput = schema({
@@ -10,15 +10,15 @@ export const CreatePersonInput = schema({
 export const createPerson = action<
   typeof CreatePersonInput._output,
   typeof PersonSchema._output,
-  MemoryDatabase
+  Database
 >({
   name: "createPerson",
   input: CreatePersonInput,
   output: PersonSchema,
   auth: "authenticated",
-  run(ctx, input) {
+  async run(ctx, input) {
     const now = new Date()
-    return ctx.db.insert("people", {
+    return await ctx.db.insert("people", {
       id: crypto.randomUUID(),
       name: input.name,
       title: input.title,

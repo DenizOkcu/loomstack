@@ -121,14 +121,14 @@ export const schemaRegistry = {
 
 For v0.1, keep database mapping simple.
 
-Option A: generate SQLite table definitions from entity schemas.
+Option A: generate PostgreSQL table definitions from entity schemas.
 
 Option B: require minimal explicit database adapter definitions.
 
 Preferred v0.1 compromise:
 
 - entity schemas define app-level shape
-- SQLite adapter can generate simple tables for supported field types
+- PostgreSQL adapter can generate simple tables for supported field types
 - advanced migrations are non-goal
 
 ## Migration expectations
@@ -137,7 +137,7 @@ v0.1 does not need production-grade migrations.
 
 Minimum acceptable behavior:
 
-- `loom db generate` creates a SQLite schema file
+- `loom db generate` creates a PostgreSQL schema file
 - `loom db apply` applies it for local development
 - verifier can detect when entity schemas changed but generated DB schema is stale
 
@@ -168,7 +168,7 @@ The verifier should catch:
 - missing schema exports declared in manifest
 - action input/output without schema
 - query input/output without schema where applicable
-- unsupported field types for SQLite generation
+- unsupported field types for PostgreSQL generation
 - stale generated schema registry
 
 ## Non-goals for v0.1

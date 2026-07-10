@@ -17,7 +17,7 @@ const DEFAULT_CONFIG: Omit<LoomProjectConfig, "appName"> = {
   packageManager: "pnpm",
   frontend: "react",
   backend: "koa",
-  database: "sqlite",
+  database: "postgres",
   featuresDir: "features",
   generatedDir: ".loom"
 }
@@ -68,7 +68,7 @@ export function loadProjectConfig(root: string): { config?: LoomProjectConfig; e
       packageManager: "pnpm",
       frontend: "react",
       backend: "koa",
-      database: "sqlite",
+      database: "postgres",
       featuresDir: values.featuresDir,
       generatedDir: values.generatedDir
     },

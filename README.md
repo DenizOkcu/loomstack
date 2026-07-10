@@ -4,7 +4,7 @@
 
 > Less ambiguity. Fewer wrong edits. Predictable fullstack changes.
 
-loom v0.1 has one golden path: TypeScript, pnpm, React + Vite, Koa, SQLite, Zod-backed schemas, and Vitest. It deliberately does not offer alternate adapters or multiple valid application structures.
+loom v0.1 has one golden path: TypeScript, pnpm, React + Vite, Koa, PostgreSQL, Zod-backed schemas, and Vitest. It deliberately does not offer alternate adapters or multiple valid application structures.
 
 ## The contract
 
@@ -112,7 +112,7 @@ See [docs/commands.md](docs/commands.md) for output contracts.
 - `@loom/verifier` — architecture and freshness enforcement
 - `@loom/react` — views, hooks, generated RPC client primitives
 - `@loom/koa` — action/query HTTP execution
-- `@loom/sqlite` — Node SQLite and deterministic in-memory test adapter
+- `@loom/postgres` — PostgreSQL persistence via `DATABASE_URL` and a deterministic in-memory test adapter
 - `@loom/cli` — command surface for agents
 - `@loom/create-app` — initializer binary
 

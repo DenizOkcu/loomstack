@@ -78,7 +78,7 @@ Example:
     "name": "manager-crm",
     "frontend": "react",
     "backend": "koa",
-    "database": "sqlite",
+    "database": "postgres",
     "packageManager": "pnpm"
   },
   "paths": {

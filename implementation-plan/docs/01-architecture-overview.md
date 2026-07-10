@@ -8,7 +8,7 @@ loom apps separate product behavior from frontend and backend adapters.
 features/*       = product behavior and source of truth
 React adapter    = presentation runtime
 Koa adapter      = HTTP transport runtime
-SQLite adapter   = persistence runtime
+PostgreSQL adapter   = persistence runtime
 CLI              = project generation, inspection, verification
 Verifier         = architecture rule enforcement
 Context system   = agent-readable project summaries
@@ -37,7 +37,7 @@ packages/
   generator/
   react-adapter/
   koa-adapter/
-  sqlite-adapter/
+  postgres-adapter/
   create-loom-app/
 examples/
   manager-crm/
@@ -133,9 +133,9 @@ Owns Koa-specific runtime helpers:
 - action/query execution over HTTP
 - structured error responses
 
-### `packages/sqlite-adapter`
+### `packages/postgres-adapter`
 
-Owns SQLite persistence integration for v0.1.
+Owns PostgreSQL persistence integration for v0.1.
 
 Keep this simple. Avoid building a full ORM in v0.1 unless necessary.
 

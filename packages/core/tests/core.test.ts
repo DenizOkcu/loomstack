@@ -6,7 +6,7 @@ import { frameworkError, scanProject, serializeFrameworkError } from "../src/ind
 
 function project() {
   const root = mkdtempSync(join(tmpdir(), "loom-core-"))
-  writeFileSync(join(root, "loom.config.ts"), `export default { appName: "test", packageManager: "pnpm", frontend: "react", backend: "koa", database: "sqlite", featuresDir: "features", generatedDir: ".loom" }`)
+  writeFileSync(join(root, "loom.config.ts"), `export default { appName: "test", packageManager: "pnpm", frontend: "react", backend: "koa", database: "postgres", featuresDir: "features", generatedDir: ".loom" }`)
   mkdirSync(join(root, "features/people/actions"), { recursive: true })
   mkdirSync(join(root, "features/people/queries"), { recursive: true })
   mkdirSync(join(root, "features/people/ui"), { recursive: true })

@@ -131,7 +131,7 @@ JSON shape:
     "name": "manager-crm",
     "frontend": "react",
     "backend": "koa",
-    "database": "sqlite"
+    "database": "postgres"
   },
   "commands": {
     "dev": "pnpm dev",

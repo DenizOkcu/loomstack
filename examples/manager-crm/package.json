@@ -17,7 +17,7 @@
     "@loom/cli": "^0.1.0",
     "@loom/react": "^0.1.0",
     "@loom/runtime": "^0.1.0",
-    "@loom/sqlite": "^0.1.0",
+    "@loom/postgres": "^0.1.0",
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

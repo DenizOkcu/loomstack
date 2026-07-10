@@ -29,7 +29,7 @@ packages/generator
 packages/verifier
 packages/react-adapter
 packages/koa-adapter
-packages/sqlite-adapter
+packages/postgres-adapter
 packages/create-loom-app
 ```
 

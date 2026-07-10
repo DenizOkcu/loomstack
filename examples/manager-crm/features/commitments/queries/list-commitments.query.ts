@@ -1,5 +1,5 @@
 import { array, query, schema } from "@loom/runtime"
-import type { MemoryDatabase } from "@loom/sqlite"
+import type { Database } from "@loom/postgres"
 import { CommitmentSchema } from "../model.schema.js"
 import type { Commitment } from "../model.schema.js"
 
@@ -9,13 +9,13 @@ function overdue(commitment: Commitment, now: number) {
   return !commitment.completed && commitment.dueAt.getTime() < now
 }
 
-export const listCommitments = query<undefined, typeof ListCommitmentsOutput._output, MemoryDatabase>({
+export const listCommitments = query<undefined, typeof ListCommitmentsOutput._output, Database>({
   name: "listCommitments",
   output: ListCommitmentsOutput,
   auth: "authenticated",
-  run(ctx) {
+  async run(ctx) {
     const now = Date.now()
-    const commitments = ctx.db.list<Commitment>("commitments", (item) => item.ownerId === ctx.user!.id)
+    const commitments = (await ctx.db.list<Commitment>("commitments", (item) => item.ownerId === ctx.user!.id))
       .sort((a, b) => Number(overdue(b, now)) - Number(overdue(a, now)) || a.dueAt.getTime() - b.dueAt.getTime())
     return { commitments }
   }

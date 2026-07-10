@@ -78,7 +78,7 @@ function boundaryErrors(project: LoomProject, scope?: string): FrameworkError[] 
       const source = readFileSync(absolute, "utf8")
       const imports = [...source.matchAll(/(?:from\s*|import\s*)["']([^"']+)["']/g)].map((match) => match[1] ?? "")
       const isUi = file.includes("/ui/")
-      if (isUi && imports.some((specifier) => /(^|[\/@.-])(db|database|sqlite)([\/@.-]|$)/i.test(specifier))) {
+      if (isUi && imports.some((specifier) => /(^|[\/@.-])(db|database|postgres)([\/@.-]|$)/i.test(specifier))) {
         errors.push(frameworkError("loom2001", { file }))
       }
       if (isUi && /\bfetch\s*\(/.test(source)) errors.push(frameworkError("loom2002", { file }))

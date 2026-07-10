@@ -1,5 +1,5 @@
 import { action, oneOf, schema, text } from "@loom/runtime"
-import type { MemoryDatabase } from "@loom/sqlite"
+import type { Database } from "@loom/postgres"
 import { ProjectSchema } from "../model.schema.js"
 
 export const CreateProjectInput = schema({
@@ -10,15 +10,15 @@ export const CreateProjectInput = schema({
 export const createProject = action<
   typeof CreateProjectInput._output,
   typeof ProjectSchema._output,
-  MemoryDatabase
+  Database
 >({
   name: "createProject",
   input: CreateProjectInput,
   output: ProjectSchema,
   auth: "authenticated",
-  run(ctx, input) {
+  async run(ctx, input) {
     const now = new Date()
-    return ctx.db.insert("projects", {
+    return await ctx.db.insert("projects", {
       id: crypto.randomUUID(),
       name: input.name,
       status: "active" as const,

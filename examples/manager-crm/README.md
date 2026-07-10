@@ -6,7 +6,7 @@ A complete loom vertical-slice fixture with:
 - `projects`: create/list projects with status and risk
 - `commitments`: create/list commitments, due dates, overdue-first ordering, and due-soon query
 
-Auth is intentionally represented by the `x-user-id` request header. Persistence defaults to the deterministic `MemoryDatabase`; `@loom/sqlite` also exposes Node's `DatabaseSync` for local SQLite storage.
+Auth is intentionally represented by the `x-user-id` request header. Persistence uses `PostgresDatabase` and reads its connection string from `DATABASE_URL`; feature tests use the deterministic `MemoryDatabase` from `@loom/postgres`.
 
 ## Validate
 

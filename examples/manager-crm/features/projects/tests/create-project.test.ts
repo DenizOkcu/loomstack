@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { executeAction, executeQuery } from "@loom/runtime"
-import { MemoryDatabase } from "@loom/sqlite"
+import { MemoryDatabase } from "@loom/postgres"
 import { createProject } from "../actions/create-project.action.js"
 import { listProjects } from "../queries/list-projects.query.js"
 

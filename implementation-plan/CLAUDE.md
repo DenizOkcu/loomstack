@@ -38,7 +38,7 @@ Feature manifests, schemas, actions, queries, policies, and views are the source
 
 - no Next.js adapter
 - no Vue/Svelte support
-- no Postgres support unless SQLite is done
+- no Postgres support unless PostgreSQL is done
 - no MCP server until CLI context works
 - no public REST API until action/query RPC works
 - no plugin system

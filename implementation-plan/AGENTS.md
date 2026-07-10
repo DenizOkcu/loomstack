@@ -22,7 +22,7 @@ Use this stack unless a task explicitly changes the implementation plan:
 - pnpm workspaces
 - React + Vite frontend adapter
 - Koa backend adapter
-- SQLite data adapter for v0.1
+- PostgreSQL data adapter for v0.1
 - Vitest
 - tsx or tsup for local execution/builds
 
@@ -39,7 +39,7 @@ packages/
   generator/
   react-adapter/
   koa-adapter/
-  sqlite-adapter/
+  postgres-adapter/
   create-loom-app/
 examples/
   manager-crm/

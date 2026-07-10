@@ -226,7 +226,7 @@ export interface LoomConfigInput {
   packageManager: "pnpm"
   frontend: "react"
   backend: "koa"
-  database: "sqlite"
+  database: "postgres"
   featuresDir: string
   generatedDir: string
 }

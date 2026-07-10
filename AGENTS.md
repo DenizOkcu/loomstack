@@ -7,7 +7,7 @@ loom is an agent-operable TypeScript fullstack framework. Product behavior belon
 - TypeScript and pnpm workspaces
 - React + Vite
 - Koa
-- SQLite
+- PostgreSQL
 - Zod-backed schemas
 - Vitest
 
@@ -39,5 +39,5 @@ pnpm loom --cwd examples/manager-crm verify --json
 - `verifier`: architecture and generated-file enforcement
 - `react-adapter`: views, hooks, RPC client
 - `koa-adapter`: RPC transport
-- `sqlite-adapter`: v0.1 persistence
+- `postgres-adapter`: v0.1 persistence
 - `cli`: agent-facing command surface

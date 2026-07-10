@@ -18,7 +18,7 @@
       "@loom/verifier": ["./packages/verifier/src/index.ts"],
       "@loom/react": ["./packages/react-adapter/src/index.tsx"],
       "@loom/koa": ["./packages/koa-adapter/src/index.ts"],
-      "@loom/sqlite": ["./packages/sqlite-adapter/src/index.ts"]
+      "@loom/postgres": ["./packages/postgres-adapter/src/index.ts"]
     }
   },
   "include": ["packages/**/*.ts", "packages/**/*.tsx", "vitest.config.ts"],

@@ -1,7 +1,7 @@
 import type Koa from "koa"
-import { MemoryDatabase } from "@loom/sqlite"
+import { PostgresDatabase } from "@loom/postgres"
 
-export const db = new MemoryDatabase()
+export const db = new PostgresDatabase()
 
 export async function createRequestContext(ctx: Koa.Context) {
   const userId = ctx.get("x-user-id")

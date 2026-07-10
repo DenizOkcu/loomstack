@@ -155,12 +155,12 @@ export const ERROR_CATALOG = {
   loom5003: {
     title: "Invalid project configuration",
     defaultMessage: "loom.config.ts does not contain the required golden-path values.",
-    repair: "Use React, Koa, SQLite, pnpm, and explicit featuresDir/generatedDir values.",
+    repair: "Use React, Koa, PostgreSQL, pnpm, and explicit featuresDir/generatedDir values.",
     docs: "implementation-plan/docs/02-repository-structure.md"
   },
   loom6001: {
-    title: "Unsupported SQLite field",
-    defaultMessage: "An entity field cannot be represented by the v0.1 SQLite adapter.",
+    title: "Unsupported PostgreSQL field",
+    defaultMessage: "An entity field cannot be represented by the v0.1 PostgreSQL adapter.",
     repair: "Use a supported scalar field or provide explicit persistence logic.",
     docs: "implementation-plan/docs/04-schema-and-domain-layer.md"
   }

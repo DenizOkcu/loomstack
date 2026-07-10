@@ -8,7 +8,7 @@ The v0.1 golden path uses:
 - **Backend:** Koa
 - **Language:** TypeScript
 - **Package manager:** pnpm
-- **Database:** SQLite first
+- **Database:** PostgreSQL first
 - **Testing:** Vitest first, Playwright later
 - **Architecture:** feature-sliced, schema-first, action/query boundary
 - **Agent interface:** CLI-first, MCP later

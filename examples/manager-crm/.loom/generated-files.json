@@ -8,11 +8,11 @@
     },
     {
       "path": ".loom/context.json",
-      "sha256": "46885e13ba4eb6ba81b3a9928b0912551d378404f038202bccb031b5d9a28f25"
+      "sha256": "7c9b54c75a3f278239493b8a37d69ab0de424349a68337a662ec7b5ec3b5db82"
     },
     {
       "path": ".loom/errors.json",
-      "sha256": "0b42ce4edbb5a28531b4df3f88e26a67f373800a46c437601e1de63d60fb3e6f"
+      "sha256": "347e296ffd3ca72c62291114cfc78cb495786b6c2eaa24795ad0d0372b69b12a"
     },
     {
       "path": ".loom/graph.json",
