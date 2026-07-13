@@ -21,5 +21,5 @@ After creation:
 ```bash
 cd my-app
 pnpm install
-pnpm dev
+pnpm loomstack init
 ```

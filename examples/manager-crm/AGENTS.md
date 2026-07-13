@@ -10,6 +10,17 @@ Koa = transport
 features/* = product behavior and source of truth
 ```
 
+## Development containers
+
+The complete app runs in Docker Compose with bind-mounted source for hot reload.
+
+- Start before browser/API validation: `pnpm loomstack dev start --json`.
+- Check state with `pnpm loomstack dev status --json`.
+- Refresh after dependency, Dockerfile, Compose, or environment changes: `pnpm loomstack dev refresh --json`.
+- Ordinary source edits hot-reload and do not require refresh.
+- Stop with `pnpm loomstack dev stop --json` only when requested or explicit cleanup requires it.
+- Diagnose lifecycle failures with `pnpm loomstack doctor --json`.
+
 ## Canonical feature layout
 
 - `feature.yaml`: declared contract

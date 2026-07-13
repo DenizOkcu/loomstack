@@ -7,3 +7,4 @@ coverage/
 *.db-shm
 *.db-wal
 .tmp/
+packages/cli/vendor/

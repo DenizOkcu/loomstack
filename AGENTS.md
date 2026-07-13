@@ -59,6 +59,8 @@ Use LoomStack's structured commands before broad repository exploration. All age
 
 Use `context` instead of manually collecting broad context, `graph` for cross-feature or route questions, `affected` to find companion files, `create feature` rather than hand-built feature folders, `generate` for all derived wiring, and `doctor` for environment/setup failures. Never hand-edit generated fixtures; change generator sources and regenerate them.
 
+Generated apps use `loomstack dev start|status|refresh|stop --json` to manage their Docker Compose web, API, and PostgreSQL services. Source edits rely on hot reload; use `refresh` only after dependency, Dockerfile, Compose, or environment changes. Stop containers only when requested or when explicit task cleanup requires it.
+
 ## Package ownership
 
 - `core`: manifests, scanning, graphs, errors, project configuration

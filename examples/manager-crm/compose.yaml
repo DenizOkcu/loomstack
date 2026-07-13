@@ -1,0 +1,71 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: loomstack
+      POSTGRES_USER: loomstack
+      POSTGRES_PASSWORD: loomstack
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U loomstack -d loomstack"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: pnpm --filter './apps/api' dev
+    environment:
+      DATABASE_URL: postgresql://loomstack:loomstack@db:5432/loomstack
+      PORT: 3001
+      CI: "true"
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - api-root-node-modules:/app/node_modules
+      - api-node-modules:/app/apps/api/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('net').connect(3001, '127.0.0.1').on('connect', () => process.exit(0)).on('error', () => process.exit(1))"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: pnpm --filter './apps/web' dev --host 0.0.0.0
+    environment:
+      LOOMSTACK_API_URL: http://api:3001
+      CHOKIDAR_USEPOLLING: "true"
+      CI: "true"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - web-root-node-modules:/app/node_modules
+      - web-node-modules:/app/apps/web/node_modules
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('net').connect(3000, '127.0.0.1').on('connect', () => process.exit(0)).on('error', () => process.exit(1))"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+volumes:
+  postgres-data:
+  api-root-node-modules:
+  api-node-modules:
+  web-root-node-modules:
+  web-node-modules:

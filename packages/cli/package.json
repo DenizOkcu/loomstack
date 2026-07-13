@@ -4,8 +4,12 @@
   "type": "module",
   "bin": { "loomstack": "./dist/index.js" },
   "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
-  "files": ["dist"],
-  "scripts": { "build": "tsup --config tsup.config.ts", "test": "vitest run" },
+  "files": ["dist", "vendor"],
+  "scripts": {
+    "build": "tsup --config tsup.config.ts",
+    "test": "vitest run",
+    "prepack": "node scripts/prepare-vendor.mjs"
+  },
   "dependencies": {
     "commander": "^15.0.0",
     "yaml": "^2.9.0"

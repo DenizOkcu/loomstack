@@ -1,4 +1,4 @@
-import { mkdtempSync } from "node:fs"
+import { mkdirSync, mkdtempSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { describe, expect, it } from "vitest"
@@ -20,7 +20,7 @@ describe("CLI JSON contract", () => {
     const output = capture()
     expect(await runCli(["--cwd", parent, "create", "app", "demo", "--json"], output.io)).toBe(0)
     const payload = JSON.parse(output.stdout())
-    expect(payload).toMatchObject({ ok: true, appName: "demo", nextCommands: ["cd demo", "pnpm install", "pnpm dev"] })
+    expect(payload).toMatchObject({ ok: true, appName: "demo", nextCommands: ["cd demo", "pnpm install", "loomstack init"] })
     expect(output.stderr()).toBe("")
   })
 
@@ -33,6 +33,21 @@ describe("CLI JSON contract", () => {
     const verify = capture()
     expect(await runCli(["--cwd", join(parent, "demo"), "verify", "--json"], verify.io)).toBe(0)
     expect(JSON.parse(verify.stdout())).toEqual({ ok: true, errors: [], warnings: [] })
+  })
+
+  it("initializes a project in an empty directory", async () => {
+    const parent = mkdtempSync(join(tmpdir(), "loomstack-empty-"))
+    const root = join(parent, "weather-app")
+    mkdirSync(root)
+    const output = capture()
+    expect(await runCli(["--cwd", root, "init", "--skip-install", "--json"], output.io)).toBe(0)
+    expect(JSON.parse(output.stdout())).toMatchObject({
+      ok: true,
+      initialized: true,
+      projectCreated: true,
+      dependenciesInstalled: false,
+      containersStarted: false
+    })
   })
 
   it("returns non-zero structured errors", async () => {

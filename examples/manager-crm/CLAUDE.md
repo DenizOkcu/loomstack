@@ -1,3 +1,3 @@
-# manager-crm loomstack memory
+# manager-crm LoomStack memory
 
-Product behavior lives in `features/*`. React renders; Koa transports. Read feature-local `AGENTS.md`, never edit generated files, use generated RPC clients, and finish with `pnpm loomstack generate && pnpm loomstack verify --json`.
+Read the root `AGENTS.md` before acting, then read every feature-local `AGENTS.md` in scope. Product behavior lives in `features/*`; React renders and Koa transports. Never edit generated files, use generated RPC clients, and finish with `pnpm loomstack generate --json && pnpm loomstack verify --json`.

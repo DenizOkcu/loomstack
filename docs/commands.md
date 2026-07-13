@@ -56,8 +56,36 @@ Returns the owning feature, all likely related authored contracts, and the recom
 
 Returns the stable error title, reason, repair, and documentation reference. Code ranges are: `loomstack1xxx` manifests, `loomstack2xxx` boundaries, `loomstack3xxx` runtime, `loomstack4xxx` generation, `loomstack5xxx` project/CLI, and `loomstack6xxx` PostgreSQL schema concerns.
 
+## Initialization
+
+### `loomstack init`
+
+In an empty directory, creates a new LoomStack project in place. It installs dependencies, starts the Docker Compose stack, and prints instructions for opening the project in a preferred CLI coding agent along with an example feature request. It never launches an agent. Use `--no-start` to initialize without starting containers or `--skip-install` for controlled/offline setup. With `--json`, it returns the same onboarding guidance as structured data.
+
+## Development containers
+
+Generated apps run Vite, Koa, and PostgreSQL through Docker Compose while bind-mounting the source tree for hot reload.
+
+### `loomstack dev start`
+
+Builds images and starts all services in the background, waiting for readiness.
+
+### `loomstack dev refresh`
+
+Rebuilds and force-recreates all services. Use this after dependency, Dockerfile, Compose, or environment changes—not ordinary source edits.
+
+### `loomstack dev status`
+
+Returns the current Compose service state without changing it.
+
+### `loomstack dev stop`
+
+Stops and removes app containers while preserving the PostgreSQL data volume.
+
+All lifecycle commands support `--json`. Agents should start services before browser/API validation and stop them only when requested or explicit cleanup is required.
+
 ## Environment
 
 ### `loomstack doctor`
 
-Checks Node 22+, pnpm, `loomstack.config.ts`, and `tsconfig.json`. It does not modify the environment.
+Checks Node 22+, pnpm, Docker Compose, `loomstack.config.ts`, `compose.yaml`, and `tsconfig.json`. It does not modify the environment.

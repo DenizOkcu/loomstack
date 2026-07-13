@@ -36,18 +36,18 @@ pnpm loomstack --cwd demo-app verify --json
 
 ## Quick start: create and develop an app
 
-Create an app and scaffold its first feature:
+Create an app, install it, then initialize the development session:
 
 ```bash
-npm create loomstack-app@latest my-app
-cd my-app
-pnpm install
-pnpm loomstack create feature people
+mkdir my-app && cd my-app
+loomstack init
 ```
 
-Open `my-app` in the coding agent or model of your choice. loomstack generates root and feature-local `AGENTS.md` files, so compatible agents receive the architecture and editing rules automatically. For other models, add `AGENTS.md` to their context.
+Alternatively, use the npm creator once published: `npm create loomstack-app@latest my-app`.
 
-Prompt with product behavior rather than file-level instructions:
+`loomstack init` validates the project, builds and starts the Docker web/API/database stack, then prints the project path, example CLI agents, and an example feature request. It never launches an agent automatically. Use `--no-start` if containers are already running.
+
+You can then describe product behavior conversationally:
 
 ```text
 Implement the people feature. Users can create people with a name and optional
@@ -66,14 +66,7 @@ pnpm loomstack verify feature people --json
 pnpm test
 ```
 
-Review the changes, configure PostgreSQL, and run the app:
-
-```bash
-export DATABASE_URL=postgresql://localhost:5432/my_app
-pnpm dev
-```
-
-The web app runs at `http://localhost:3000` and proxies loomstack RPC calls to the Koa API on port `3001`. Repeat the same context → edit → generate → verify → test loop for every feature, regardless of the model or coding-agent interface.
+The initialized web app runs at `http://localhost:3000` and proxies LoomStack RPC calls to the Koa API on port `3001`; PostgreSQL runs in the same Docker Compose stack. Repeat the same context → edit → generate → verify → test loop for every feature.
 
 ## Agent workflow
 
@@ -128,6 +121,7 @@ All agent-facing commands support `--json`.
 | `loomstack create app <name>` | Create the complete golden-path application |
 | `loomstack create feature <name>` | Scaffold one canonical feature and refresh generation |
 | `loomstack generate` | Regenerate routes, clients, registries, graph, context, and hashes |
+| `loomstack dev start\|refresh\|status\|stop` | Manage the Docker development stack |
 | `loomstack verify [feature <name>]` | Enforce manifests, boundaries, and generated freshness |
 | `loomstack context [feature <name>]` | Return scoped edit context |
 | `loomstack graph` | Return the feature graph |

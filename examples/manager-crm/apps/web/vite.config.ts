@@ -3,5 +3,9 @@ import react from "@vitejs/plugin-react"
 
 export default defineConfig({
   plugins: [react()],
-  server: { port: 3000, proxy: { "/_loomstack": "http://localhost:3001" } }
+  server: {
+    host: "0.0.0.0",
+    port: 3000,
+    proxy: { "/_loomstack": process.env.LOOMSTACK_API_URL ?? "http://localhost:3001" }
+  }
 })

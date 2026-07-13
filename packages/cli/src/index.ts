@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process"
-import { existsSync, realpathSync } from "node:fs"
-import { relative, resolve } from "node:path"
-import { pathToFileURL } from "node:url"
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, realpathSync, writeFileSync } from "node:fs"
+import { dirname, relative, resolve } from "node:path"
+import { fileURLToPath, pathToFileURL } from "node:url"
 import { Command, CommanderError } from "commander"
 import {
   discoverProjectRoot,
@@ -13,7 +13,7 @@ import {
   toProjectPath
 } from "@loomstack/core"
 import type { FrameworkError, LoomStackProject, ScannedFeature } from "@loomstack/core"
-import { createApp, createFeature, generateProject, GeneratorFailure } from "@loomstack/generator"
+import { createApp, createAppInPlace, createFeature, generateProject, GeneratorFailure } from "@loomstack/generator"
 import { verifyProject } from "@loomstack/verifier"
 
 export interface CliIO {
@@ -113,6 +113,40 @@ function affected(project: LoomStackProject, fileInput: string) {
   }
 }
 
+function provisionLocalPackages(root: string): boolean {
+  const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..")
+  const vendor = resolve(packageRoot, "vendor")
+  if (!existsSync(vendor)) return false
+  const tarballs = readdirSync(vendor).filter((name) => name.endsWith(".tgz")).sort()
+  if (tarballs.length === 0) return false
+
+  const local = resolve(root, ".loomstack/local-packages")
+  mkdirSync(local, { recursive: true })
+  for (const tarball of tarballs) cpSync(resolve(vendor, tarball), resolve(local, tarball))
+
+  const cliTarget = resolve(local, "cli")
+  mkdirSync(cliTarget, { recursive: true })
+  cpSync(resolve(packageRoot, "dist"), resolve(cliTarget, "dist"), { recursive: true })
+  const cliPackage = JSON.parse(readFileSync(resolve(packageRoot, "package.json"), "utf8")) as Record<string, unknown>
+  delete cliPackage.devDependencies
+  delete cliPackage.scripts
+  writeFileSync(resolve(cliTarget, "package.json"), `${JSON.stringify(cliPackage, null, 2)}\n`)
+
+  const overrides: Record<string, string> = {
+    "@loomstack/cli": "file:.loomstack/local-packages/cli"
+  }
+  for (const tarball of tarballs) {
+    const match = tarball.match(/^loomstack-(koa|postgres|react|runtime)-/)
+    if (match?.[1]) overrides[`@loomstack/${match[1]}`] = `file:.loomstack/local-packages/${tarball}`
+  }
+  const workspacePath = resolve(root, "pnpm-workspace.yaml")
+  const workspace = readFileSync(workspacePath, "utf8").replace(/\noverrides:\n(?: {2}.+\n)*/g, "\n")
+  const overrideYaml = Object.entries(overrides).sort(([a], [b]) => a.localeCompare(b))
+    .map(([name, path]) => `  "${name}": "${path}"`).join("\n")
+  writeFileSync(workspacePath, `${workspace.trimEnd()}\n\noverrides:\n${overrideYaml}\n`)
+  return true
+}
+
 function humanErrors(errors: FrameworkError[]): string {
   return errors.map((error) => [
     `${error.code}: ${error.message}`,
@@ -179,6 +213,94 @@ export async function runCli(argv: string[], io: CliIO = {
     await execute(() => ({ ...generateProject(projectRoot(cwd())) }), (result) => `Generated ${(result.generatedFiles as string[]).length} files.`)
   })
 
+  function compose(action: string, args: string[]): Record<string, unknown> {
+    const root = projectRoot(cwd())
+    const result = spawnSync("docker", ["compose", ...args], { cwd: root, encoding: "utf8" })
+    if (result.status !== 0) {
+      const detail = result.stderr.trim() || result.stdout.trim() || "Docker Compose failed to run."
+      throw new GeneratorFailure([frameworkError("loomstack5003", {
+        message: `${action} failed: ${detail}`,
+        file: "compose.yaml"
+      })])
+    }
+    return { action, root, output: result.stdout.trim() || null }
+  }
+
+  program.command("init")
+    .description("initialize the project, start development, and print agent guidance")
+    .option("--no-start", "initialize without starting containers")
+    .option("--skip-install", "skip dependency installation")
+    .action(async (options: { start: boolean; skipInstall?: boolean }) => {
+      await execute(() => {
+        const existingRoot = discoverProjectRoot(cwd())
+        const created = existingRoot ? null : createAppInPlace(cwd())
+        const root = existingRoot ?? created!.root
+        const localPackages = provisionLocalPackages(root)
+
+        let dependenciesInstalled = existsSync(resolve(root, "pnpm-lock.yaml"))
+        if (!dependenciesInstalled && !options.skipInstall) {
+          const install = spawnSync("pnpm", ["install"], { cwd: root, encoding: "utf8" })
+          if (install.status !== 0) {
+            const detail = install.stderr.trim() || install.stdout.trim() || "pnpm install failed."
+            throw new GeneratorFailure([frameworkError("loomstack5003", {
+              message: `Dependency installation failed: ${detail}`,
+              file: "package.json"
+            })])
+          }
+          dependenciesInstalled = true
+        }
+
+        const project = projectOrThrow(root)
+        const started = options.start && dependenciesInstalled
+          ? compose("start", ["up", "--detach", "--build", "--wait"])
+          : null
+        const examplePrompt = "Build a weather app where users can search for a city, view current conditions, and see a seven-day forecast. Read AGENTS.md first and use the LoomStack workflow."
+        return {
+          initialized: true,
+          projectCreated: Boolean(created),
+          project: project.config.appName,
+          projectRoot: root,
+          dependenciesInstalled,
+          localPackages,
+          containersStarted: Boolean(started),
+          ...(created ? { createdFiles: created.createdFiles } : {}),
+          agentGuidance: {
+            instruction: "Open this directory in your preferred CLI coding agent, then describe the feature you want to build.",
+            exampleCommands: ["claude", "codex", "pi"],
+            examplePrompt
+          }
+        }
+      }, (result) => {
+        const guidance = result.agentGuidance as { instruction: string; exampleCommands: string[]; examplePrompt: string }
+        return [
+          `${result.projectCreated ? "Created" : "Initialized"} LoomStack project: ${result.project as string}`,
+          `Project: ${result.projectRoot as string}`,
+          `Dependencies: ${result.dependenciesInstalled ? "installed" : "skipped"}`,
+          `Containers: ${result.containersStarted ? "running" : "not started"}`,
+          "",
+          guidance.instruction,
+          `For example, start one of: ${guidance.exampleCommands.join(", ")}`,
+          "",
+          "Example request:",
+          guidance.examplePrompt
+        ].join("\n")
+      })
+    })
+
+  const dev = program.command("dev").description("manage the Docker development stack")
+  dev.command("start").description("build and start web, API, and database containers").action(async () => {
+    await execute(() => compose("start", ["up", "--detach", "--build", "--wait"]), () => "LoomStack development containers started.")
+  })
+  dev.command("refresh").description("rebuild and recreate all development containers").action(async () => {
+    await execute(() => compose("refresh", ["up", "--detach", "--build", "--force-recreate", "--wait"]), () => "LoomStack development containers refreshed.")
+  })
+  dev.command("stop").description("stop and remove development containers").action(async () => {
+    await execute(() => compose("stop", ["down"]), () => "LoomStack development containers stopped.")
+  })
+  dev.command("status").description("show development container status").action(async () => {
+    await execute(() => compose("status", ["ps"]), (result) => (result.output as string | null) ?? "No LoomStack development containers are running.")
+  })
+
   const context = program.command("context").description("show agent-readable project context")
   context.action(async () => {
     await execute(() => projectContext(projectOrThrow(projectRoot(cwd()))), () => {
@@ -225,10 +347,13 @@ export async function runCli(argv: string[], io: CliIO = {
     await execute(() => {
       const root = discoverProjectRoot(cwd())
       const pnpm = spawnSync("pnpm", ["--version"], { encoding: "utf8" })
+      const docker = spawnSync("docker", ["compose", "version", "--short"], { encoding: "utf8" })
       const checks = {
         node: { ok: Number(process.versions.node.split(".")[0]) >= 22, version: process.versions.node },
         pnpm: { ok: pnpm.status === 0, version: pnpm.stdout.trim() || null },
+        dockerCompose: { ok: docker.status === 0, version: docker.stdout.trim() || null },
         config: { ok: Boolean(root), path: root ? toProjectPath(relative(cwd(), resolve(root, "loomstack.config.ts"))) || "loomstack.config.ts" : null },
+        compose: { ok: root ? existsSync(resolve(root, "compose.yaml")) : false, path: root ? "compose.yaml" : null },
         typescript: { ok: root ? existsSync(resolve(root, "tsconfig.json")) : false }
       }
       return { healthy: Object.values(checks).every((check) => check.ok), checks }
