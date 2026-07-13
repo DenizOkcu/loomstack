@@ -1,8 +1,8 @@
 import type { AddressInfo } from "node:net"
 import Koa from "koa"
 import { describe, expect, it } from "vitest"
-import { action, query, schema, text } from "@loom/runtime"
-import { registerLoomRoutes } from "../src/index.js"
+import { action, query, schema, text } from "@loomstack/runtime"
+import { registerLoomStackRoutes } from "../src/index.js"
 
 async function jsonBody(ctx: Koa.Context, next: Koa.Next) {
   let body = ""
@@ -26,7 +26,7 @@ describe("Koa transport", () => {
     })
     const app = new Koa()
     app.use(jsonBody)
-    registerLoomRoutes(app, {
+    registerLoomStackRoutes(app, {
       actionRegistry: { echo },
       queryRegistry: { status },
       createRequestContext: () => ({ requestId: "req-1", db: {}, logger: {} })
@@ -34,21 +34,21 @@ describe("Koa transport", () => {
     const server = app.listen(0)
     const port = (server.address() as AddressInfo).port
     try {
-      const actionResponse = await fetch(`http://127.0.0.1:${port}/_loom/actions/echo`, {
+      const actionResponse = await fetch(`http://127.0.0.1:${port}/_loomstack/actions/echo`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ value: "hello" })
       })
       expect(await actionResponse.json()).toEqual({ value: "hello" })
 
-      const queryResponse = await fetch(`http://127.0.0.1:${port}/_loom/queries/status`, { method: "POST" })
+      const queryResponse = await fetch(`http://127.0.0.1:${port}/_loomstack/queries/status`, { method: "POST" })
       expect(await queryResponse.json()).toEqual({ value: "ready" })
 
-      const missing = await fetch(`http://127.0.0.1:${port}/_loom/actions/missing`, { method: "POST" })
+      const missing = await fetch(`http://127.0.0.1:${port}/_loomstack/actions/missing`, { method: "POST" })
       expect(missing.status).toBe(404)
-      expect(await missing.json()).toMatchObject({ error: { code: "loom4040", repair: expect.any(String) } })
+      expect(await missing.json()).toMatchObject({ error: { code: "loomstack4040", repair: expect.any(String) } })
 
-      const inherited = await fetch(`http://127.0.0.1:${port}/_loom/actions/toString`, { method: "POST" })
+      const inherited = await fetch(`http://127.0.0.1:${port}/_loomstack/actions/toString`, { method: "POST" })
       expect(inherited.status).toBe(404)
     } finally {
       server.close()

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
-import { executeAction, executeQuery } from "@loom/runtime"
-import { MemoryDatabase } from "@loom/postgres"
+import { executeAction, executeQuery } from "@loomstack/runtime"
+import { MemoryDatabase } from "@loomstack/postgres"
 import { createCommitment } from "../actions/create-commitment.action.js"
 import { listCommitments } from "../queries/list-commitments.query.js"
 

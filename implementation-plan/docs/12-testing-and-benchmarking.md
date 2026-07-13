@@ -4,7 +4,7 @@ Testing must prove both framework correctness and agent-operability.
 
 ## Test philosophy
 
-loom should be tested as a product for agents, not just as a library.
+loomstack should be tested as a product for agents, not just as a library.
 
 Test the contracts agents rely on:
 
@@ -95,7 +95,7 @@ Another scenario:
 2. create feature
 3. intentionally add db import in UI
 4. run verify
-5. assert `loom2001`
+5. assert `loomstack2001`
 
 ## Example app tests
 
@@ -117,13 +117,13 @@ Required demo tasks:
 
 ## Benchmarking agent-operability
 
-loom should include a benchmark plan comparing an loom app against an equivalent unconstrained React/Koa app.
+loomstack should include a benchmark plan comparing an loomstack app against an equivalent unconstrained React/Koa app.
 
 ### Benchmark setup
 
 Create two apps:
 
-1. `examples/manager-crm-loom`
+1. `examples/manager-crm-loomstack`
 2. `examples/manager-crm-plain-react-koa`
 
 Both should implement equivalent features.
@@ -159,7 +159,7 @@ Collect manually or via harness:
 
 ### Expected result
 
-loom should reduce:
+loomstack should reduce:
 
 - irrelevant file reads
 - architecture violations

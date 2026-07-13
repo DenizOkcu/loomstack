@@ -1,6 +1,6 @@
 # 03 — Feature Contract
 
-loom applications are composed of declared features.
+loomstack applications are composed of declared features.
 
 A feature is a self-contained product capability with a manifest, schema, policies, actions, queries, UI, and tests.
 
@@ -97,7 +97,7 @@ export interface FeatureRoute {
 
 ## Feature-local `AGENTS.md`
 
-Each feature should include a local instruction file generated or updated by loom.
+Each feature should include a local instruction file generated or updated by loomstack.
 
 Example:
 
@@ -127,7 +127,7 @@ This feature manages people and relationship context.
 Run:
 
 ```bash
-pnpm loom verify feature people
+pnpm loomstack verify feature people
 ```
 ```
 
@@ -206,23 +206,23 @@ When an agent adds a field to an entity:
 
 1. Read `feature.yaml`.
 2. Read `model.schema.ts`.
-3. Run `loom affected features/<feature>/model.schema.ts --json` if available.
+3. Run `loomstack affected features/<feature>/model.schema.ts --json` if available.
 4. Edit schema.
 5. Update affected create/update actions.
 6. Update affected queries.
 7. Update forms/views.
 8. Update tests.
-9. Run `loom verify feature <feature> --json`.
+9. Run `loomstack verify feature <feature> --json`.
 10. Repair all reported errors.
 
 ## Agent workflow for adding a new feature
 
-1. Run `loom create feature <name>`.
+1. Run `loomstack create feature <name>`.
 2. Edit `feature.yaml`.
 3. Define schema.
 4. Add actions.
 5. Add queries.
 6. Add views.
 7. Add tests.
-8. Run `loom generate` if generation is separate.
-9. Run `loom verify`.
+8. Run `loomstack generate` if generation is separate.
+9. Run `loomstack verify`.

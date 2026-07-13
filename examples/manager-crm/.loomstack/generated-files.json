@@ -1,0 +1,50 @@
+{
+  "generatedBy": "loomstack",
+  "doNotEdit": true,
+  "files": [
+    {
+      "path": ".loomstack/commands.json",
+      "sha256": "623c404eebfadc6c8941cd5e8e5ee348c33226462a4e45f776c055cf7a9aee35"
+    },
+    {
+      "path": ".loomstack/context.json",
+      "sha256": "7c7cb20ccfa5c8a641c0497a1d18adef66aa999169013544dc1d9a5bf555346e"
+    },
+    {
+      "path": ".loomstack/errors.json",
+      "sha256": "a78c666b73965997f7bfab52d57c36ca0f63c1480ffab9476df8fc07560a920c"
+    },
+    {
+      "path": ".loomstack/graph.json",
+      "sha256": "ac3abcc38e46f9fc0205db13ec76b98fde4b4eff8bc4ee47d5ae74685314c708"
+    },
+    {
+      "path": "apps/api/src/routes.generated.ts",
+      "sha256": "0369b18ef656be6c4e6230e50fbff301d60178b0b946daa3cc7052803a1a57f8"
+    },
+    {
+      "path": "apps/web/src/api-client.generated.ts",
+      "sha256": "7bef259938d071df3a6917879d4819630e3d016cf37b35d05d3008c6b4afbb3f"
+    },
+    {
+      "path": "apps/web/src/routes.generated.tsx",
+      "sha256": "f2423274a04437ba655f374a92444fc1448b2f082846ae56eb160386b8fe6291"
+    },
+    {
+      "path": "shared/generated/action-registry.generated.ts",
+      "sha256": "e9907ac0d934018cceddc42fe4859c661e8807a0c987264b6411bb8f83256711"
+    },
+    {
+      "path": "shared/generated/feature-registry.generated.ts",
+      "sha256": "827245af03daa002cf079233d00821fa31c19955c122740a3436eec0b90b61af"
+    },
+    {
+      "path": "shared/generated/query-registry.generated.ts",
+      "sha256": "fc74a07a5c6ee5a745b778fb3c83a58884cbcd8e8bfa84166f095af67b84b24a"
+    },
+    {
+      "path": "shared/generated/schema-registry.generated.ts",
+      "sha256": "0103d72d33149b1f59e73cec3938977571cf620ea535710ff7142a152412899c"
+    }
+  ]
+}

@@ -1,10 +1,10 @@
 {
-  "name": "@loom/generator",
+  "name": "@loomstack/generator",
   "version": "0.1.0",
   "type": "module",
   "sideEffects": false,
   "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
   "files": ["dist"],
   "scripts": { "build": "tsup src/index.ts --format esm --dts --clean", "test": "vitest run" },
-  "dependencies": { "@loom/core": "workspace:*" }
+  "dependencies": { "@loomstack/core": "workspace:*" }
 }

@@ -12,13 +12,13 @@
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "paths": {
-      "@loom/core": ["./packages/core/src/index.ts"],
-      "@loom/runtime": ["./packages/runtime/src/index.ts"],
-      "@loom/generator": ["./packages/generator/src/index.ts"],
-      "@loom/verifier": ["./packages/verifier/src/index.ts"],
-      "@loom/react": ["./packages/react-adapter/src/index.tsx"],
-      "@loom/koa": ["./packages/koa-adapter/src/index.ts"],
-      "@loom/postgres": ["./packages/postgres-adapter/src/index.ts"]
+      "@loomstack/core": ["./packages/core/src/index.ts"],
+      "@loomstack/runtime": ["./packages/runtime/src/index.ts"],
+      "@loomstack/generator": ["./packages/generator/src/index.ts"],
+      "@loomstack/verifier": ["./packages/verifier/src/index.ts"],
+      "@loomstack/react": ["./packages/react-adapter/src/index.tsx"],
+      "@loomstack/koa": ["./packages/koa-adapter/src/index.ts"],
+      "@loomstack/postgres": ["./packages/postgres-adapter/src/index.ts"]
     }
   },
   "include": ["packages/**/*.ts", "packages/**/*.tsx", "vitest.config.ts"],

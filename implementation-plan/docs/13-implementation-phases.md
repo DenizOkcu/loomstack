@@ -30,7 +30,7 @@ packages/verifier
 packages/react-adapter
 packages/koa-adapter
 packages/postgres-adapter
-packages/create-loom-app
+packages/create-loomstack-app
 ```
 
 ### Acceptance criteria
@@ -49,7 +49,7 @@ Implement shared types and the framework error model.
 
 - define `FeatureManifest`
 - define `FeatureRoute`
-- define `loomProjectConfig`
+- define `loomstackProjectConfig`
 - define `FrameworkError`
 - define `CommandResult`
 - define error code registry
@@ -65,12 +65,12 @@ Implement shared types and the framework error model.
 
 ### Goal
 
-Scan an loom project and parse feature manifests.
+Scan an loomstack project and parse feature manifests.
 
 ### Tasks
 
 - implement project root discovery
-- load `loom.config.ts` or equivalent config
+- load `loomstack.config.ts` or equivalent config
 - scan `features/*/feature.yaml`
 - parse YAML
 - validate required fields
@@ -114,7 +114,7 @@ Implement the public app authoring API.
 
 ### Goal
 
-Implement `loom create feature <name>`.
+Implement `loomstack create feature <name>`.
 
 ### Tasks
 
@@ -135,7 +135,7 @@ Implement `loom create feature <name>`.
 
 ### Goal
 
-Implement `loom create app <name>`.
+Implement `loomstack create app <name>`.
 
 ### Tasks
 
@@ -143,16 +143,16 @@ Implement `loom create app <name>`.
 - generate package files
 - generate apps/web skeleton
 - generate apps/api skeleton
-- generate root `loom.config.ts`
+- generate root `loomstack.config.ts`
 - generate top-level `AGENTS.md` and `CLAUDE.md`
 - create empty `features` folder
-- create `.loom` folder
+- create `.loomstack` folder
 
 ### Acceptance criteria
 
 - created app installs successfully
 - created app has expected files
-- created app can run `loom verify`
+- created app can run `loomstack verify`
 
 ## Phase 6 — Registry generation
 
@@ -219,7 +219,7 @@ Generate Koa transport routes for actions and queries.
 
 ### Goal
 
-Implement `loom verify` with core rules.
+Implement `loomstack verify` with core rules.
 
 ### Tasks
 
@@ -245,21 +245,21 @@ Implement `loom verify` with core rules.
 
 ### Goal
 
-Implement `loom context`, `loom graph`, `loom affected`, and generated `.loom/*.json`.
+Implement `loomstack context`, `loomstack graph`, `loomstack affected`, and generated `.loomstack/*.json`.
 
 ### Tasks
 
-- generate `.loom/context.json`
-- generate `.loom/graph.json`
-- generate `.loom/commands.json`
-- generate `.loom/errors.json`
+- generate `.loomstack/context.json`
+- generate `.loomstack/graph.json`
+- generate `.loomstack/commands.json`
+- generate `.loomstack/errors.json`
 - implement CLI context output
 - implement feature-scoped context output
 - implement basic affected-file logic
 
 ### Acceptance criteria
 
-- agent can run `loom context feature people --json`
+- agent can run `loomstack context feature people --json`
 - context matches actual feature files
 - stale context is detected by verifier
 

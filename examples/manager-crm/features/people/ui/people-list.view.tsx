@@ -1,4 +1,4 @@
-import { view } from "@loom/react"
+import { view } from "@loomstack/react"
 import type { Person } from "../model.schema.js"
 
 export default view<{ people: Person[] }>({

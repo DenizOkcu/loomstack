@@ -18,7 +18,7 @@ function clone<T>(value: T): T {
 
 function tableName(table: string): string {
   if (!/^[a-z][a-z0-9_]*$/.test(table)) throw new Error(`Invalid PostgreSQL table name: ${table}`)
-  return `loom_${table}`
+  return `loomstack_${table}`
 }
 
 export class MemoryDatabase implements Database {
@@ -114,7 +114,7 @@ export class PostgresDatabase implements Database {
   }
 
   async clear(): Promise<void> {
-    const result = await this.pool.query<{ tablename: string } & QueryResultRow>("SELECT tablename FROM pg_tables WHERE schemaname = current_schema() AND tablename LIKE 'loom_%'")
+    const result = await this.pool.query<{ tablename: string } & QueryResultRow>("SELECT tablename FROM pg_tables WHERE schemaname = current_schema() AND tablename LIKE 'loomstack_%'")
     for (const { tablename } of result.rows) await this.pool.query(`TRUNCATE TABLE ${tableName(tablename.slice(5))}`)
   }
 

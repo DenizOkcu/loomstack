@@ -1,4 +1,4 @@
-import { entity, id, oneOf, text, timestamp, userId } from "@loom/runtime"
+import { entity, id, oneOf, text, timestamp, userId } from "@loomstack/runtime"
 
 export const ProjectSchema = entity("Project", {
   id: id(),

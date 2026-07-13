@@ -21,4 +21,4 @@ Projects product capability.
 
 ## Verify
 
-`pnpm loom verify feature projects --json`
+`pnpm loomstack verify feature projects --json`

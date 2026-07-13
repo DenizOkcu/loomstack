@@ -1,0 +1,22 @@
+{
+  "name": "create-loomstack-app",
+  "version": "0.1.0",
+  "description": "Create a full-stack loomstack application",
+  "type": "module",
+  "bin": { "create-loomstack-app": "./dist/cli.js" },
+  "exports": { ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" } },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsup --config tsup.config.ts",
+    "test": "vitest run --root ../.. packages/create-loomstack-app/tests",
+    "prepublishOnly": "pnpm test && pnpm build"
+  },
+  "dependencies": { "yaml": "^2.9.0" },
+  "devDependencies": { "@loomstack/generator": "workspace:*" },
+  "engines": { "node": ">=22.0.0" },
+  "keywords": ["loomstack", "create-app", "fullstack", "typescript", "react", "koa", "postgresql"],
+  "repository": { "type": "git", "url": "git+https://github.com/DenizOkcu/loomstack.git", "directory": "packages/create-loomstack-app" },
+  "homepage": "https://github.com/DenizOkcu/loomstack#readme",
+  "bugs": "https://github.com/DenizOkcu/loomstack/issues",
+  "publishConfig": { "access": "public" }
+}

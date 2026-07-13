@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
-import { ERROR_CATALOG, frameworkError, scanProject } from "@loom/core"
-import type { GeneratedFilesManifest, LoomProject, ScannedFeature } from "@loom/core"
+import { ERROR_CATALOG, frameworkError, scanProject } from "@loomstack/core"
+import type { GeneratedFilesManifest, LoomStackProject, ScannedFeature } from "@loomstack/core"
 import { GENERATED_SOURCE_MARKER, sha256, stableJson, writeProjectFile } from "./files.js"
 import { GeneratorFailure } from "./scaffold.js"
 
@@ -13,7 +13,7 @@ function importPath(path: string): string {
   return `../../${path.replace(/\.(tsx?|jsx?)$/, ".js")}`
 }
 
-function featureRegistry(project: LoomProject): string {
+function featureRegistry(project: LoomStackProject): string {
   const entries = project.features.map((feature) =>
     `  ${JSON.stringify(feature.id)}: { id: ${JSON.stringify(feature.id)}, name: ${JSON.stringify(feature.manifest.name)}, manifestPath: ${JSON.stringify(feature.manifestPath)} }`
   )
@@ -24,7 +24,7 @@ function featureRegistry(project: LoomProject): string {
   ])
 }
 
-function actionRegistry(project: LoomProject): string {
+function actionRegistry(project: LoomStackProject): string {
   const actions = project.features.flatMap((feature) => feature.actions).sort((a, b) => a.name.localeCompare(b.name))
   return source([
     ...actions.map((item) => `import { ${item.name} } from ${JSON.stringify(importPath(item.file))}`),
@@ -35,7 +35,7 @@ function actionRegistry(project: LoomProject): string {
   ])
 }
 
-function queryRegistry(project: LoomProject): string {
+function queryRegistry(project: LoomStackProject): string {
   const queries = project.features.flatMap((feature) => feature.queries).sort((a, b) => a.name.localeCompare(b.name))
   return source([
     ...queries.map((item) => `import { ${item.name} } from ${JSON.stringify(importPath(item.file))}`),
@@ -46,7 +46,7 @@ function queryRegistry(project: LoomProject): string {
   ])
 }
 
-function schemaRegistry(project: LoomProject): string {
+function schemaRegistry(project: LoomStackProject): string {
   const schemas = project.features.flatMap((feature) => feature.manifest.entities.map((name) => ({
     name,
     file: `${feature.directory}/model.schema.ts`
@@ -64,12 +64,12 @@ function resolveView(feature: ScannedFeature, viewName: string): string | undefi
   return feature.views.find((item) => item.name === viewName)?.file
 }
 
-function reactRoutes(project: LoomProject): string {
+function reactRoutes(project: LoomStackProject): string {
   const routes = project.features.flatMap((feature) => feature.manifest.routes.map((route) => ({ ...route, feature })))
     .sort((a, b) => a.path.localeCompare(b.path) || a.id.localeCompare(b.id))
   const missing = routes.filter((route) => !resolveView(route.feature, route.view))
   if (missing.length) {
-    throw new GeneratorFailure(missing.map((route) => frameworkError("loom1009", {
+    throw new GeneratorFailure(missing.map((route) => frameworkError("loomstack1009", {
       message: `Route ${route.id} references missing view ${route.view}.`,
       file: route.feature.manifestPath
     })))
@@ -78,14 +78,14 @@ function reactRoutes(project: LoomProject): string {
     'import { lazy } from "react"',
     'import type { ComponentType, LazyExoticComponent } from "react"',
     "",
-    "export interface LoomRoute {",
+    "export interface LoomStackRoute {",
     "  id: string",
     "  feature: string",
     "  path: string",
     "  component: LazyExoticComponent<ComponentType>",
     "}",
     "",
-    "export const routes: LoomRoute[] = [",
+    "export const routes: LoomStackRoute[] = [",
     ...routes.map((route) => {
       const file = resolveView(route.feature, route.view) ?? ""
       const relative = `../../../${file.replace(/\.(tsx?|jsx?)$/, "")}`
@@ -95,11 +95,11 @@ function reactRoutes(project: LoomProject): string {
   ])
 }
 
-function apiClient(project: LoomProject): string {
+function apiClient(project: LoomStackProject): string {
   const actions = project.features.flatMap((feature) => feature.actions).sort((a, b) => a.name.localeCompare(b.name))
   const queries = project.features.flatMap((feature) => feature.queries).sort((a, b) => a.name.localeCompare(b.name))
   return source([
-    'import { createActionClient, createQueryClient } from "@loom/react"',
+    'import { createActionClient, createQueryClient } from "@loomstack/react"',
     ...actions.map((item) => `import type { ${item.name} as _${item.name}Definition } from ${JSON.stringify(`../../../${item.file.replace(/\.(tsx?|jsx?)$/, ".js")}`)}`),
     ...queries.map((item) => `import type { ${item.name} as _${item.name}Definition } from ${JSON.stringify(`../../../${item.file.replace(/\.(tsx?|jsx?)$/, ".js")}`)}`),
     "",
@@ -117,20 +117,20 @@ function apiClient(project: LoomProject): string {
 function koaRoutes(): string {
   return source([
     'import type Koa from "koa"',
-    'import { registerLoomRoutes } from "@loom/koa"',
+    'import { registerLoomStackRoutes } from "@loomstack/koa"',
     'import { actionRegistry } from "../../../shared/generated/action-registry.generated.js"',
     'import { queryRegistry } from "../../../shared/generated/query-registry.generated.js"',
     'import { createRequestContext } from "./context.js"',
     "",
     "export function registerGeneratedRoutes(app: Koa) {",
-    "  registerLoomRoutes(app, { actionRegistry, queryRegistry, createRequestContext })",
+    "  registerLoomStackRoutes(app, { actionRegistry, queryRegistry, createRequestContext })",
     "}"
   ])
 }
 
-function contextDocument(project: LoomProject) {
+function contextDocument(project: LoomStackProject) {
   return {
-    generatedBy: "loom",
+    generatedBy: "loomstack",
     doNotEdit: true,
     project: {
       name: project.config.appName,
@@ -142,42 +142,42 @@ function contextDocument(project: LoomProject) {
     paths: { features: project.config.featuresDir, web: "apps/web", api: "apps/api" },
     commands: {
       dev: "pnpm dev",
-      verify: "pnpm loom verify",
+      verify: "pnpm loomstack verify",
       test: "pnpm test",
       typecheck: "pnpm typecheck"
     },
     features: project.features.map((feature) => feature.id),
     rules: [
       { id: "feature-source-of-truth", description: "Product behavior lives in features/*.", errorCode: null },
-      { id: "no-db-in-ui", description: "React UI files may not import database code.", errorCode: "loom2001" },
-      { id: "no-fetch-in-ui", description: "React UI files may not call raw fetch.", errorCode: "loom2002" },
-      { id: "transport-independent-features", description: "Feature logic may not import Koa.", errorCode: "loom2003" }
+      { id: "no-db-in-ui", description: "React UI files may not import database code.", errorCode: "loomstack2001" },
+      { id: "no-fetch-in-ui", description: "React UI files may not call raw fetch.", errorCode: "loomstack2002" },
+      { id: "transport-independent-features", description: "Feature logic may not import Koa.", errorCode: "loomstack2003" }
     ]
   }
 }
 
-function graphDocument(project: LoomProject) {
-  return { generatedBy: "loom", doNotEdit: true, ...project.graph }
+function graphDocument(project: LoomStackProject) {
+  return { generatedBy: "loomstack", doNotEdit: true, ...project.graph }
 }
 
 function commandsDocument() {
   return {
-    generatedBy: "loom",
+    generatedBy: "loomstack",
     doNotEdit: true,
     commands: {
       install: "pnpm install",
       dev: "pnpm dev",
       test: "pnpm test",
       typecheck: "pnpm typecheck",
-      verify: "pnpm loom verify",
-      verifyFeature: "pnpm loom verify feature <feature>"
+      verify: "pnpm loomstack verify",
+      verifyFeature: "pnpm loomstack verify feature <feature>"
     }
   }
 }
 
 function errorsDocument() {
   return {
-    generatedBy: "loom",
+    generatedBy: "loomstack",
     doNotEdit: true,
     errors: Object.fromEntries(Object.entries(ERROR_CATALOG).sort(([a], [b]) => a.localeCompare(b)).map(([code, definition]) => [code, {
       title: definition.title,
@@ -187,7 +187,7 @@ function errorsDocument() {
   }
 }
 
-export function renderGeneratedFiles(project: LoomProject): Record<string, string> {
+export function renderGeneratedFiles(project: LoomStackProject): Record<string, string> {
   const generatedDir = project.config.generatedDir
   const entries: Array<[string, string]> = [
     ["apps/web/src/routes.generated.tsx", reactRoutes(project)],
@@ -207,7 +207,7 @@ export function renderGeneratedFiles(project: LoomProject): Record<string, strin
 
 export function generatedManifest(files: Record<string, string>): GeneratedFilesManifest {
   return {
-    generatedBy: "loom",
+    generatedBy: "loomstack",
     doNotEdit: true,
     files: Object.entries(files).map(([path, content]) => ({ path, sha256: sha256(content) })).sort((a, b) => a.path.localeCompare(b.path))
   }
@@ -217,7 +217,7 @@ export interface ProjectGenerationResult {
   generatedFiles: string[]
 }
 
-function generationContractErrors(project: LoomProject) {
+function generationContractErrors(project: LoomStackProject) {
   const errors = []
   const operationOwners = new Map<string, string>()
   for (const feature of project.features) {
@@ -226,27 +226,27 @@ function generationContractErrors(project: LoomProject) {
     const viewNames = new Set(feature.views.map((item) => item.name))
     const schemaNames = new Set(feature.schemas.map((item) => item.name))
     for (const name of feature.manifest.actions) {
-      if (!actionNames.has(name)) errors.push(frameworkError("loom1003", { message: `Manifest action "${name}" is not exported.`, file: feature.manifestPath }))
+      if (!actionNames.has(name)) errors.push(frameworkError("loomstack1003", { message: `Manifest action "${name}" is not exported.`, file: feature.manifestPath }))
     }
     for (const operation of feature.actions) {
-      if (!feature.manifest.actions.includes(operation.name)) errors.push(frameworkError("loom1004", { message: `Exported action "${operation.name}" is missing from feature.yaml.`, file: operation.file }))
+      if (!feature.manifest.actions.includes(operation.name)) errors.push(frameworkError("loomstack1004", { message: `Exported action "${operation.name}" is missing from feature.yaml.`, file: operation.file }))
     }
     for (const name of feature.manifest.queries) {
-      if (!queryNames.has(name)) errors.push(frameworkError("loom1007", { message: `Manifest query "${name}" is not exported.`, file: feature.manifestPath }))
+      if (!queryNames.has(name)) errors.push(frameworkError("loomstack1007", { message: `Manifest query "${name}" is not exported.`, file: feature.manifestPath }))
     }
     for (const operation of feature.queries) {
-      if (!feature.manifest.queries.includes(operation.name)) errors.push(frameworkError("loom1008", { message: `Exported query "${operation.name}" is missing from feature.yaml.`, file: operation.file }))
+      if (!feature.manifest.queries.includes(operation.name)) errors.push(frameworkError("loomstack1008", { message: `Exported query "${operation.name}" is missing from feature.yaml.`, file: operation.file }))
     }
     for (const route of feature.manifest.routes) {
-      if (!viewNames.has(route.view)) errors.push(frameworkError("loom1009", { message: `Route "${route.id}" references missing view "${route.view}".`, file: feature.manifestPath }))
+      if (!viewNames.has(route.view)) errors.push(frameworkError("loomstack1009", { message: `Route "${route.id}" references missing view "${route.view}".`, file: feature.manifestPath }))
     }
     for (const name of feature.manifest.entities) {
-      if (!schemaNames.has(name)) errors.push(frameworkError("loom1010", { message: `Manifest entity "${name}" is not exported by model.schema.ts.`, file: feature.manifestPath }))
+      if (!schemaNames.has(name)) errors.push(frameworkError("loomstack1010", { message: `Manifest entity "${name}" is not exported by model.schema.ts.`, file: feature.manifestPath }))
     }
     for (const [kind, operations] of [["action", feature.actions], ["query", feature.queries]] as const) {
       for (const operation of operations) {
         const owner = operationOwners.get(operation.name)
-        if (owner) errors.push(frameworkError(kind === "action" ? "loom1004" : "loom1008", { message: `Operation "${operation.name}" is also exported by ${owner}.`, file: operation.file }))
+        if (owner) errors.push(frameworkError(kind === "action" ? "loomstack1004" : "loomstack1008", { message: `Operation "${operation.name}" is also exported by ${owner}.`, file: operation.file }))
         else operationOwners.set(operation.name, feature.id)
       }
     }
@@ -266,7 +266,7 @@ export function generateProject(root: string): ProjectGenerationResult {
   return { generatedFiles: [...Object.keys(files), manifestPath].sort() }
 }
 
-export function readGeneratedManifest(project: LoomProject): GeneratedFilesManifest | undefined {
+export function readGeneratedManifest(project: LoomStackProject): GeneratedFilesManifest | undefined {
   const path = join(project.root, project.config.generatedDir, "generated-files.json")
   if (!existsSync(path)) return undefined
   try {

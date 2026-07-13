@@ -1,8 +1,8 @@
 # 11 — Agent Context System
 
-The agent context system is a core differentiator of loom.
+The agent context system is a core differentiator of loomstack.
 
-loom apps should be inspectable by coding agents without requiring blind repository exploration.
+loomstack apps should be inspectable by coding agents without requiring blind repository exploration.
 
 ## Goals
 
@@ -15,16 +15,16 @@ loom apps should be inspectable by coding agents without requiring blind reposit
 
 ## Context surfaces
 
-loom should generate or maintain:
+loomstack should generate or maintain:
 
 ```txt
 AGENTS.md
 CLAUDE.md
 features/*/AGENTS.md
-.loom/context.json
-.loom/graph.json
-.loom/commands.json
-.loom/errors.json
+.loomstack/context.json
+.loomstack/graph.json
+.loomstack/commands.json
+.loomstack/errors.json
 ```
 
 ## `AGENTS.md`
@@ -64,7 +64,7 @@ Must include:
 - verification command
 - local rules
 
-## `.loom/context.json`
+## `.loomstack/context.json`
 
 Project-level machine context.
 
@@ -72,7 +72,7 @@ Example:
 
 ```json
 {
-  "generatedBy": "loom",
+  "generatedBy": "loomstack",
   "doNotEdit": true,
   "project": {
     "name": "manager-crm",
@@ -88,7 +88,7 @@ Example:
   },
   "commands": {
     "dev": "pnpm dev",
-    "verify": "pnpm loom verify",
+    "verify": "pnpm loomstack verify",
     "test": "pnpm test",
     "typecheck": "pnpm typecheck"
   },
@@ -97,13 +97,13 @@ Example:
     {
       "id": "no-db-in-ui",
       "description": "React UI files may not import database code.",
-      "errorCode": "loom2001"
+      "errorCode": "loomstack2001"
     }
   ]
 }
 ```
 
-## `.loom/graph.json`
+## `.loomstack/graph.json`
 
 Feature graph.
 
@@ -111,7 +111,7 @@ Example:
 
 ```json
 {
-  "generatedBy": "loom",
+  "generatedBy": "loomstack",
   "doNotEdit": true,
   "features": [
     {
@@ -144,35 +144,35 @@ Example:
 }
 ```
 
-## `.loom/commands.json`
+## `.loomstack/commands.json`
 
 Command registry.
 
 ```json
 {
-  "generatedBy": "loom",
+  "generatedBy": "loomstack",
   "doNotEdit": true,
   "commands": {
     "install": "pnpm install",
     "dev": "pnpm dev",
     "test": "pnpm test",
     "typecheck": "pnpm typecheck",
-    "verify": "pnpm loom verify",
-    "verifyFeature": "pnpm loom verify feature <feature>"
+    "verify": "pnpm loomstack verify",
+    "verifyFeature": "pnpm loomstack verify feature <feature>"
   }
 }
 ```
 
-## `.loom/errors.json`
+## `.loomstack/errors.json`
 
 Error catalog.
 
 ```json
 {
-  "generatedBy": "loom",
+  "generatedBy": "loomstack",
   "doNotEdit": true,
   "errors": {
-    "loom2001": {
+    "loomstack2001": {
       "title": "Forbidden database import in UI file",
       "repair": "Move database access into a query file.",
       "docs": "docs/10-verifier-and-error-system.md"
@@ -186,11 +186,11 @@ Error catalog.
 Required:
 
 ```bash
-loom context --json
-loom context feature people --json
-loom graph --json
-loom affected <file> --json
-loom explain <error-code> --json
+loomstack context --json
+loomstack context feature people --json
+loomstack graph --json
+loomstack affected <file> --json
+loomstack explain <error-code> --json
 ```
 
 ## Context freshness
@@ -201,9 +201,9 @@ Example error:
 
 ```json
 {
-  "code": "loom4002",
-  "message": ".loom/context.json is stale.",
-  "repair": "Run loom generate or loom context generate."
+  "code": "loomstack4002",
+  "message": ".loomstack/context.json is stale.",
+  "repair": "Run loomstack generate or loomstack context generate."
 }
 ```
 
@@ -212,9 +212,9 @@ Example error:
 Later versions can update sections between markers:
 
 ```md
-<!-- loom:BEGIN managed-context -->
+<!-- loomstack:BEGIN managed-context -->
 ...
-<!-- loom:END managed-context -->
+<!-- loomstack:END managed-context -->
 ```
 
 For v0.1, generate markdown files on app creation and regenerate JSON context.

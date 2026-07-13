@@ -11,16 +11,16 @@ export interface ClientOptions {
   fetch?: typeof globalThis.fetch
 }
 
-export class LoomClientError extends Error {
+export class LoomStackClientError extends Error {
   constructor(readonly error: { code: string; message: string; repair?: string; details?: unknown }) {
     super(error.message)
-    this.name = "LoomClientError"
+    this.name = "LoomStackClientError"
   }
 }
 
 let defaultClientOptions: ClientOptions = {}
 
-export function configureLoomClient(options: ClientOptions): void {
+export function configureLoomStackClient(options: ClientOptions): void {
   defaultClientOptions = { ...options }
 }
 
@@ -28,7 +28,7 @@ async function call<TOutput>(kind: "actions" | "queries", name: string, input: u
   const merged = { ...defaultClientOptions, ...options }
   const fetchImplementation = merged.fetch ?? globalThis.fetch
   if (!fetchImplementation) throw new Error("No fetch implementation is available.")
-  const response = await fetchImplementation(`${merged.baseUrl ?? ""}/_loom/${kind}/${encodeURIComponent(name)}`, {
+  const response = await fetchImplementation(`${merged.baseUrl ?? ""}/_loomstack/${kind}/${encodeURIComponent(name)}`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify(input ?? {})
@@ -37,16 +37,16 @@ async function call<TOutput>(kind: "actions" | "queries", name: string, input: u
   try {
     payload = await response.json() as typeof payload
   } catch {
-    throw new LoomClientError({
-      code: "loom3002",
-      message: `loom RPC returned a non-JSON response (${response.status}).`,
+    throw new LoomStackClientError({
+      code: "loomstack3002",
+      message: `loomstack RPC returned a non-JSON response (${response.status}).`,
       repair: "Ensure the request targets the generated Koa RPC endpoint."
     })
   }
   if (!response.ok || (typeof payload === "object" && payload !== null && "error" in payload && payload.error)) {
     const error = (payload as { error?: { code: string; message: string; repair?: string; details?: unknown } }).error
       ?? { code: `HTTP_${response.status}`, message: response.statusText }
-    throw new LoomClientError(error)
+    throw new LoomStackClientError(error)
   }
   return payload as TOutput
 }
@@ -66,7 +66,7 @@ export interface QueryState<T> {
   refetch: () => Promise<void>
 }
 
-export function useLoomQuery<TInput, TOutput>(reference: OperationReference<TOutput> | undefined, input?: TInput): QueryState<TOutput> {
+export function useLoomStackQuery<TInput, TOutput>(reference: OperationReference<TOutput> | undefined, input?: TInput): QueryState<TOutput> {
   const serializedInput = useMemo(() => JSON.stringify(input ?? {}), [input])
   const operationName = reference?.name
   const client = useMemo(() => operationName ? createQueryClient<TInput, TOutput>(operationName) : undefined, [operationName])
@@ -95,7 +95,7 @@ export interface ActionState<TInput, TOutput> {
   loading: boolean
 }
 
-export function useLoomAction<TInput, TOutput>(reference: OperationReference<TOutput>): ActionState<TInput, TOutput> {
+export function useLoomStackAction<TInput, TOutput>(reference: OperationReference<TOutput>): ActionState<TInput, TOutput> {
   const client = useMemo(() => createActionClient<TInput, TOutput>(reference.name), [reference.name])
   const [state, setState] = useState<{ data?: TOutput; error?: Error; loading: boolean }>({ loading: false })
   const run = useCallback(async (input: TInput) => {
@@ -119,11 +119,11 @@ export interface ViewDefinition<TData> {
   render: (props: { data: TData; loading: boolean; error?: Error; refetch: () => Promise<void> }) => ReactNode
 }
 
-export type LoomView<TData> = ComponentType & { readonly loom: ViewDefinition<TData> }
+export type LoomStackView<TData> = ComponentType & { readonly loomstack: ViewDefinition<TData> }
 
-export function view<TData = undefined>(definition: ViewDefinition<TData>): LoomView<TData> {
-  function LoomViewComponent() {
-    const state = useLoomQuery<undefined, TData>(definition.query)
+export function view<TData = undefined>(definition: ViewDefinition<TData>): LoomStackView<TData> {
+  function LoomStackViewComponent() {
+    const state = useLoomStackQuery<undefined, TData>(definition.query)
     if (!definition.query) {
       return definition.render({ data: undefined as TData, loading: false, refetch: async () => undefined })
     }
@@ -134,9 +134,6 @@ export function view<TData = undefined>(definition: ViewDefinition<TData>): Loom
       ...(state.error ? { error: state.error } : {})
     })
   }
-  Object.defineProperty(LoomViewComponent, "name", { value: definition.name })
-  return Object.assign(LoomViewComponent, { loom: Object.freeze(definition) })
+  Object.defineProperty(LoomStackViewComponent, "name", { value: definition.name })
+  return Object.assign(LoomStackViewComponent, { loomstack: Object.freeze(definition) })
 }
-
-export const useloomQuery = useLoomQuery
-export const useloomAction = useLoomAction

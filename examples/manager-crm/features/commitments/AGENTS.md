@@ -21,4 +21,4 @@ Commitments product capability.
 
 ## Verify
 
-`pnpm loom verify feature commitments --json`
+`pnpm loomstack verify feature commitments --json`

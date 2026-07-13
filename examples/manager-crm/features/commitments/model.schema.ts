@@ -1,4 +1,4 @@
-import { boolean, entity, id, text, timestamp, userId } from "@loom/runtime"
+import { boolean, entity, id, text, timestamp, userId } from "@loomstack/runtime"
 
 export const CommitmentSchema = entity("Commitment", {
   id: id(),

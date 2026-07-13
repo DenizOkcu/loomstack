@@ -15,7 +15,7 @@ export interface FeatureManifest {
   permissions?: Record<string, string>
 }
 
-export interface LoomProjectConfig {
+export interface LoomStackProjectConfig {
   appName: string
   packageManager: "pnpm"
   frontend: "react"
@@ -79,16 +79,16 @@ export interface FeatureGraph {
   dependencies: Array<{ from: string; to: string }>
 }
 
-export interface LoomProject {
+export interface LoomStackProject {
   root: string
   configPath: string
-  config: LoomProjectConfig
+  config: LoomStackProjectConfig
   features: ScannedFeature[]
   graph: FeatureGraph
 }
 
 export interface ScanResult {
-  project?: LoomProject
+  project?: LoomStackProject
   errors: FrameworkError[]
 }
 
@@ -104,7 +104,7 @@ export interface GeneratedFileRecord {
 }
 
 export interface GeneratedFilesManifest {
-  generatedBy: "loom"
+  generatedBy: "loomstack"
   doNotEdit: true
   files: GeneratedFileRecord[]
 }

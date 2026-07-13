@@ -1,13 +1,13 @@
 # 08 — CLI Specification
 
-The loom CLI is the primary agent interface.
+The loomstack CLI is the primary agent interface.
 
 Every command that matters to a coding agent must support structured JSON output.
 
 ## Binary name
 
 ```bash
-loom
+loomstack
 ```
 
 ## Global flags
@@ -22,33 +22,33 @@ loom
 ## Command list
 
 ```bash
-loom create app <name>
-loom create feature <name>
-loom generate
-loom context
-loom context feature <name>
-loom graph
-loom affected <file>
-loom verify
-loom verify feature <name>
-loom explain <error-code>
-loom doctor
+loomstack create app <name>
+loomstack create feature <name>
+loomstack generate
+loomstack context
+loomstack context feature <name>
+loomstack graph
+loomstack affected <file>
+loomstack verify
+loomstack verify feature <name>
+loomstack explain <error-code>
+loomstack doctor
 ```
 
-## `loom create app <name>`
+## `loomstack create app <name>`
 
-Creates a new loom app from the default template.
+Creates a new loomstack app from the default template.
 
 Example:
 
 ```bash
-loom create app manager-crm
+loomstack create app manager-crm
 ```
 
 Expected output:
 
 ```txt
-Created loom app: manager-crm
+Created loomstack app: manager-crm
 Next steps:
   cd manager-crm
   pnpm install
@@ -61,19 +61,19 @@ JSON output:
 {
   "ok": true,
   "appName": "manager-crm",
-  "createdFiles": ["package.json", "loom.config.ts"],
+  "createdFiles": ["package.json", "loomstack.config.ts"],
   "nextCommands": ["cd manager-crm", "pnpm install", "pnpm dev"]
 }
 ```
 
-## `loom create feature <name>`
+## `loomstack create feature <name>`
 
 Creates a canonical feature folder.
 
 Example:
 
 ```bash
-loom create feature people
+loomstack create feature people
 ```
 
 Generated files:
@@ -102,7 +102,7 @@ JSON output:
 }
 ```
 
-## `loom generate`
+## `loomstack generate`
 
 Regenerates all derived files.
 
@@ -113,11 +113,11 @@ Should generate:
 - action registry
 - query registry
 - schema registry
-- `.loom/context.json`
-- `.loom/graph.json`
-- `.loom/generated-files.json`
+- `.loomstack/context.json`
+- `.loomstack/graph.json`
+- `.loomstack/generated-files.json`
 
-## `loom context`
+## `loomstack context`
 
 Prints project-level context for agents.
 
@@ -135,7 +135,7 @@ JSON shape:
   },
   "commands": {
     "dev": "pnpm dev",
-    "verify": "pnpm loom verify",
+    "verify": "pnpm loomstack verify",
     "test": "pnpm test"
   },
   "features": ["people", "projects", "commitments"],
@@ -146,7 +146,7 @@ JSON shape:
 }
 ```
 
-## `loom context feature <name>`
+## `loomstack context feature <name>`
 
 Prints feature-specific context.
 
@@ -181,7 +181,7 @@ JSON shape:
 }
 ```
 
-## `loom graph`
+## `loomstack graph`
 
 Prints the feature graph and dependency graph.
 
@@ -202,14 +202,14 @@ For v0.1, feature graph can be simple:
 }
 ```
 
-## `loom affected <file>`
+## `loomstack affected <file>`
 
 Returns files likely affected by changes to a given file.
 
 Example:
 
 ```bash
-loom affected features/people/model.schema.ts --json
+loomstack affected features/people/model.schema.ts --json
 ```
 
 Output:
@@ -226,11 +226,11 @@ Output:
     "features/people/ui/person-form.view.tsx",
     "features/people/tests/create-person.test.ts"
   ],
-  "recommendedVerification": "pnpm loom verify feature people"
+  "recommendedVerification": "pnpm loomstack verify feature people"
 }
 ```
 
-## `loom verify`
+## `loomstack verify`
 
 Runs framework verification.
 
@@ -251,7 +251,7 @@ JSON output:
   "ok": false,
   "errors": [
     {
-      "code": "loom2001",
+      "code": "loomstack2001",
       "severity": "error",
       "message": "Database imports are forbidden in React view files.",
       "file": "features/people/ui/people-list.view.tsx",
@@ -261,27 +261,27 @@ JSON output:
 }
 ```
 
-## `loom verify feature <name>`
+## `loomstack verify feature <name>`
 
 Runs verification scoped to one feature.
 
 This is important for agent loops.
 
-## `loom explain <error-code>`
+## `loomstack explain <error-code>`
 
 Returns documentation for an error.
 
 Example:
 
 ```bash
-loom explain loom2001 --json
+loomstack explain loomstack2001 --json
 ```
 
 Output:
 
 ```json
 {
-  "code": "loom2001",
+  "code": "loomstack2001",
   "title": "Forbidden database import in UI file",
   "why": "React UI must not access persistence directly.",
   "repair": "Move database access into a query file and call the query from the view.",
@@ -289,7 +289,7 @@ Output:
 }
 ```
 
-## `loom doctor`
+## `loomstack doctor`
 
 Checks project environment:
 

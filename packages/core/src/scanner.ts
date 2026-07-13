@@ -5,7 +5,7 @@ import { frameworkError } from "./errors.js"
 import type {
   FeatureGraph,
   FeatureManifest,
-  LoomProjectConfig,
+  LoomStackProjectConfig,
   NamedFile,
   ScanResult,
   ScannedFeature,
@@ -13,13 +13,13 @@ import type {
 } from "./types.js"
 
 const FEATURE_ID = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/
-const DEFAULT_CONFIG: Omit<LoomProjectConfig, "appName"> = {
+const DEFAULT_CONFIG: Omit<LoomStackProjectConfig, "appName"> = {
   packageManager: "pnpm",
   frontend: "react",
   backend: "koa",
   database: "postgres",
   featuresDir: "features",
-  generatedDir: ".loom"
+  generatedDir: ".loomstack"
 }
 
 export function toProjectPath(path: string): string {
@@ -29,7 +29,7 @@ export function toProjectPath(path: string): string {
 export function discoverProjectRoot(start: string): string | undefined {
   let current = resolve(start)
   while (true) {
-    if (existsSync(join(current, "loom.config.ts"))) return current
+    if (existsSync(join(current, "loomstack.config.ts"))) return current
     const parent = dirname(current)
     if (parent === current) return undefined
     current = parent
@@ -41,10 +41,10 @@ function quotedValue(source: string, key: string): string | undefined {
   return match?.[1]
 }
 
-export function loadProjectConfig(root: string): { config?: LoomProjectConfig; errors: ReturnType<typeof frameworkError>[] } {
-  const configPath = join(root, "loom.config.ts")
+export function loadProjectConfig(root: string): { config?: LoomStackProjectConfig; errors: ReturnType<typeof frameworkError>[] } {
+  const configPath = join(root, "loomstack.config.ts")
   if (!existsSync(configPath)) {
-    return { errors: [frameworkError("loom5001", { file: "loom.config.ts" })] }
+    return { errors: [frameworkError("loomstack5001", { file: "loomstack.config.ts" })] }
   }
 
   const source = readFileSync(configPath, "utf8")
@@ -59,7 +59,7 @@ export function loadProjectConfig(root: string): { config?: LoomProjectConfig; e
   }
 
   if (!appName || values.packageManager !== DEFAULT_CONFIG.packageManager || values.frontend !== DEFAULT_CONFIG.frontend || values.backend !== DEFAULT_CONFIG.backend || values.database !== DEFAULT_CONFIG.database || values.featuresDir !== DEFAULT_CONFIG.featuresDir || values.generatedDir !== DEFAULT_CONFIG.generatedDir) {
-    return { errors: [frameworkError("loom5003", { file: "loom.config.ts" })] }
+    return { errors: [frameworkError("loomstack5003", { file: "loomstack.config.ts" })] }
   }
 
   return {
@@ -95,9 +95,9 @@ function discoverNamedFiles(root: string, directory: string, suffix: string, kin
 function discoverViews(root: string, directory: string): ViewFile[] {
   return filesIn(directory, ".view.tsx").flatMap((file) => {
     const source = readFileSync(file, "utf8")
-    const loomName = source.match(/\bname\s*:\s*["']([A-Za-z_$][\w$]*)["']/)?.[1]
+    const loomStackName = source.match(/\bname\s*:\s*["']([A-Za-z_$][\w$]*)["']/)?.[1]
     const namedExport = source.match(/export\s+const\s+([A-Za-z_$][\w$]*)\s*=\s*view\s*\(/)?.[1]
-    const name = loomName ?? namedExport
+    const name = loomStackName ?? namedExport
     return name ? [{ name, file: toProjectPath(relative(root, file)) }] : []
   })
 }
@@ -114,48 +114,48 @@ function discoverSchemas(root: string, featureDirectory: string): NamedFile[] {
 function validateManifest(value: unknown, manifestPath: string, folderName: string) {
   const errors: ReturnType<typeof frameworkError>[] = []
   if (!value || typeof value !== "object" || Array.isArray(value)) {
-    return { errors: [frameworkError("loom1002", { file: manifestPath })] }
+    return { errors: [frameworkError("loomstack1002", { file: manifestPath })] }
   }
   const input = value as Record<string, unknown>
   const requiredStrings = ["id", "name"] as const
   for (const key of requiredStrings) {
     if (typeof input[key] !== "string" || input[key].length === 0) {
-      errors.push(frameworkError("loom1002", { message: `Missing or invalid required field: ${key}.`, file: manifestPath }))
+      errors.push(frameworkError("loomstack1002", { message: `Missing or invalid required field: ${key}.`, file: manifestPath }))
     }
   }
   for (const key of ["entities", "routes", "actions", "queries"] as const) {
     if (!Array.isArray(input[key])) {
-      errors.push(frameworkError("loom1002", { message: `Missing or invalid required array: ${key}.`, file: manifestPath }))
+      errors.push(frameworkError("loomstack1002", { message: `Missing or invalid required array: ${key}.`, file: manifestPath }))
     }
   }
   if (errors.length > 0) return { errors }
 
   const id = input.id as string
-  if (!FEATURE_ID.test(id)) errors.push(frameworkError("loom1011", { file: manifestPath }))
+  if (!FEATURE_ID.test(id)) errors.push(frameworkError("loomstack1011", { file: manifestPath }))
   if (id !== folderName) {
-    errors.push(frameworkError("loom1001", { message: `Feature ID "${id}" does not match folder "${folderName}".`, file: manifestPath }))
+    errors.push(frameworkError("loomstack1001", { message: `Feature ID "${id}" does not match folder "${folderName}".`, file: manifestPath }))
   }
   if (input.description !== undefined && typeof input.description !== "string") {
-    errors.push(frameworkError("loom1002", { message: "description must be a string when provided.", file: manifestPath }))
+    errors.push(frameworkError("loomstack1002", { message: "description must be a string when provided.", file: manifestPath }))
   }
   if (input.permissions !== undefined && (
     !input.permissions || typeof input.permissions !== "object" || Array.isArray(input.permissions)
     || Object.values(input.permissions as Record<string, unknown>).some((value) => typeof value !== "string")
   )) {
-    errors.push(frameworkError("loom1002", { message: "permissions must map string names to string requirements.", file: manifestPath }))
+    errors.push(frameworkError("loomstack1002", { message: "permissions must map string names to string requirements.", file: manifestPath }))
   }
   for (const key of ["entities", "actions", "queries"] as const) {
     const values = input[key] as unknown[]
     if (values.some((value) => typeof value !== "string" || value.length === 0) || new Set(values).size !== values.length) {
-      errors.push(frameworkError("loom1002", { message: `${key} must contain unique, non-empty strings.`, file: manifestPath }))
+      errors.push(frameworkError("loomstack1002", { message: `${key} must contain unique, non-empty strings.`, file: manifestPath }))
     }
   }
   if ((input.entities as string[]).some((name) => !/^[A-Z][A-Za-z0-9]*$/.test(name))) {
-    errors.push(frameworkError("loom1002", { message: "Entity names must be PascalCase identifiers.", file: manifestPath }))
+    errors.push(frameworkError("loomstack1002", { message: "Entity names must be PascalCase identifiers.", file: manifestPath }))
   }
   for (const key of ["actions", "queries"] as const) {
     if ((input[key] as string[]).some((name) => !/^[A-Za-z_$][\w$]*$/.test(name))) {
-      errors.push(frameworkError("loom1002", { message: `${key} names must be JavaScript identifiers.`, file: manifestPath }))
+      errors.push(frameworkError("loomstack1002", { message: `${key} names must be JavaScript identifiers.`, file: manifestPath }))
     }
   }
 
@@ -163,17 +163,17 @@ function validateManifest(value: unknown, manifestPath: string, folderName: stri
   const routeIds = new Set<string>()
   for (const route of routes) {
     if (!route || typeof route !== "object") {
-      errors.push(frameworkError("loom1002", { message: "Every route must be an object with id, path, and view.", file: manifestPath }))
+      errors.push(frameworkError("loomstack1002", { message: "Every route must be an object with id, path, and view.", file: manifestPath }))
       continue
     }
     const candidate = route as Record<string, unknown>
     if (["id", "path", "view"].some((key) => typeof candidate[key] !== "string" || (candidate[key] as string).length === 0)) {
-      errors.push(frameworkError("loom1002", { message: "Every route requires string id, path, and view fields.", file: manifestPath }))
+      errors.push(frameworkError("loomstack1002", { message: "Every route requires string id, path, and view fields.", file: manifestPath }))
     } else if (!(candidate.path as string).startsWith("/") || !/^[A-Za-z_$][\w$]*$/.test(candidate.view as string)) {
-      errors.push(frameworkError("loom1002", { message: "Route paths must start with / and route views must be JavaScript identifiers.", file: manifestPath }))
+      errors.push(frameworkError("loomstack1002", { message: "Route paths must start with / and route views must be JavaScript identifiers.", file: manifestPath }))
     }
     if (typeof candidate.id === "string") {
-      if (routeIds.has(candidate.id)) errors.push(frameworkError("loom1002", { message: `Duplicate route ID: ${candidate.id}.`, file: manifestPath }))
+      if (routeIds.has(candidate.id)) errors.push(frameworkError("loomstack1002", { message: `Duplicate route ID: ${candidate.id}.`, file: manifestPath }))
       routeIds.add(candidate.id)
     }
   }
@@ -205,7 +205,7 @@ export function scanProject(rootInput: string): ScanResult {
       try {
         raw = parse(readFileSync(absoluteManifest, "utf8"))
       } catch (error) {
-        errors.push(frameworkError("loom1006", { message: `Invalid YAML: ${error instanceof Error ? error.message : String(error)}`, file: manifestPath }))
+        errors.push(frameworkError("loomstack1006", { message: `Invalid YAML: ${error instanceof Error ? error.message : String(error)}`, file: manifestPath }))
         continue
       }
       const validated = validateManifest(raw, manifestPath, folderName)
@@ -236,7 +236,7 @@ export function scanProject(rootInput: string): ScanResult {
     for (const route of feature.manifest.routes) {
       const owner = paths.get(route.path)
       if (owner) {
-        errors.push(frameworkError("loom1005", {
+        errors.push(frameworkError("loomstack1005", {
           message: `Route path "${route.path}" is declared by both ${owner} and ${feature.id}.`,
           file: feature.manifestPath,
           relatedFiles: [features.find((item) => item.id === owner)?.manifestPath ?? owner]
@@ -260,7 +260,7 @@ export function scanProject(rootInput: string): ScanResult {
   }
 
   return {
-    project: { root, configPath: "loom.config.ts", config, features, graph },
+    project: { root, configPath: "loomstack.config.ts", config, features, graph },
     errors
   }
 }

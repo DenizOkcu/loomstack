@@ -16,7 +16,7 @@ function capture() {
 
 describe("CLI JSON contract", () => {
   it("creates an app and emits JSON only", async () => {
-    const parent = mkdtempSync(join(tmpdir(), "loom-cli-"))
+    const parent = mkdtempSync(join(tmpdir(), "loomstack-cli-"))
     const output = capture()
     expect(await runCli(["--cwd", parent, "create", "app", "demo", "--json"], output.io)).toBe(0)
     const payload = JSON.parse(output.stdout())
@@ -25,7 +25,7 @@ describe("CLI JSON contract", () => {
   })
 
   it("returns project context and verification as stable JSON", async () => {
-    const parent = mkdtempSync(join(tmpdir(), "loom-cli-"))
+    const parent = mkdtempSync(join(tmpdir(), "loomstack-cli-"))
     await runCli(["--cwd", parent, "create", "app", "demo", "--quiet"], capture().io)
     const context = capture()
     expect(await runCli(["--cwd", join(parent, "demo"), "context", "--json"], context.io)).toBe(0)
@@ -37,8 +37,8 @@ describe("CLI JSON contract", () => {
 
   it("returns non-zero structured errors", async () => {
     const output = capture()
-    const empty = mkdtempSync(join(tmpdir(), "loom-cli-"))
+    const empty = mkdtempSync(join(tmpdir(), "loomstack-cli-"))
     expect(await runCli(["--cwd", empty, "verify", "--json"], output.io)).toBe(1)
-    expect(JSON.parse(output.stdout())).toMatchObject({ ok: false, errors: [{ code: "loom5001" }] })
+    expect(JSON.parse(output.stdout())).toMatchObject({ ok: false, errors: [{ code: "loomstack5001" }] })
   })
 })

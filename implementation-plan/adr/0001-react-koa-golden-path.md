@@ -6,11 +6,11 @@ Accepted for v0.1.
 
 ## Context
 
-loom needs one fullstack path that is familiar to coding agents and has explicit boundaries.
+loomstack needs one fullstack path that is familiar to coding agents and has explicit boundaries.
 
 ## Decision
 
-loom v0.1 will use:
+loomstack v0.1 will use:
 
 - React + Vite for frontend
 - Koa for backend

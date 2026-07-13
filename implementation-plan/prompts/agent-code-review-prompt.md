@@ -1,9 +1,9 @@
 # Agent Code Review Prompt
 
-Use this prompt to ask another agent to review an loom implementation change.
+Use this prompt to ask another agent to review an loomstack implementation change.
 
 ```txt
-You are reviewing an implementation of loom: Agent-Operable Fullstack Framework.
+You are reviewing an implementation of loomstack: Agent-Operable Fullstack Framework.
 
 Review against these priorities:
 

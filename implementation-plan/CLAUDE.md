@@ -1,12 +1,12 @@
-# CLAUDE.md — loom Agent Memory
+# CLAUDE.md — loomstack Agent Memory
 
-loom means **Agent-Operable Fullstack Framework**.
+loomstack means **Agent-Operable Fullstack Framework**.
 
 The framework's highest priority is reducing ambiguity for coding agents. Optimize for deterministic project structure, explicit contracts, generated wiring, structured verification, and repairable errors.
 
 ## Mental model
 
-loom app code has three zones:
+loomstack app code has three zones:
 
 ```txt
 React = presentation
@@ -71,7 +71,7 @@ Example:
 
 ```json
 {
-  "code": "loom2001",
+  "code": "loomstack2001",
   "severity": "error",
   "message": "Database imports are forbidden in React view files.",
   "file": "features/people/ui/people-list.view.tsx",

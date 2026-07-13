@@ -53,27 +53,27 @@ export function optional<T extends z.ZodType>(field: T) {
   return field.optional()
 }
 
-export interface LoomUser {
+export interface LoomStackUser {
   id: string
   [key: string]: unknown
 }
 
-export interface LoomLogger {
+export interface LoomStackLogger {
   debug?(message: string, details?: unknown): void
   info?(message: string, details?: unknown): void
   warn?(message: string, details?: unknown): void
   error?(message: string, details?: unknown): void
 }
 
-export interface LoomRequestContext<TDatabase = unknown> {
+export interface LoomStackRequestContext<TDatabase = unknown> {
   requestId: string
-  user?: LoomUser
+  user?: LoomStackUser
   db: TDatabase
-  logger: LoomLogger
+  logger: LoomStackLogger
 }
 
-export type ActionContext<TDatabase = unknown> = LoomRequestContext<TDatabase>
-export type QueryContext<TDatabase = unknown> = LoomRequestContext<TDatabase>
+export type ActionContext<TDatabase = unknown> = LoomStackRequestContext<TDatabase>
+export type QueryContext<TDatabase = unknown> = LoomStackRequestContext<TDatabase>
 export type AuthRequirement = "public" | "authenticated"
 
 export interface ActionDefinition<TInput, TOutput, TDatabase = unknown> {
@@ -115,20 +115,20 @@ export function query<TInput = undefined, TOutput = unknown, TDatabase = unknown
 }
 
 export interface RuntimeErrorBody {
-  code: "loom3001" | "loom3002" | "loom3003"
+  code: "loomstack3001" | "loomstack3002" | "loomstack3003"
   message: string
   operation?: string
   details?: Array<{ path: string; message: string }>
   repair: string
 }
 
-export class LoomRuntimeError extends Error {
+export class LoomStackRuntimeError extends Error {
   readonly status: number
   readonly body: RuntimeErrorBody
 
   constructor(status: number, body: RuntimeErrorBody) {
     super(body.message)
-    this.name = "LoomRuntimeError"
+    this.name = "LoomStackRuntimeError"
     this.status = status
     this.body = body
   }
@@ -138,10 +138,10 @@ function validationDetails(error: z.ZodError) {
   return error.issues.map((issue) => ({ path: issue.path.map(String).join("."), message: issue.message }))
 }
 
-async function assertAuth(ctx: LoomRequestContext, auth: AuthRequirement, operation: string) {
+async function assertAuth(ctx: LoomStackRequestContext, auth: AuthRequirement, operation: string) {
   if (auth === "authenticated" && !ctx.user) {
-    throw new LoomRuntimeError(401, {
-      code: "loom3003",
+    throw new LoomStackRuntimeError(401, {
+      code: "loomstack3003",
       message: "Authentication is required.",
       operation,
       repair: "Authenticate the request before calling this operation."
@@ -156,8 +156,8 @@ export async function executeAction<TInput, TOutput, TDatabase>(
 ): Promise<TOutput> {
   const parsedInput = definition.input.safeParse(rawInput)
   if (!parsedInput.success) {
-    throw new LoomRuntimeError(400, {
-      code: "loom3001",
+    throw new LoomStackRuntimeError(400, {
+      code: "loomstack3001",
       message: "Action input validation failed.",
       operation: definition.name,
       details: validationDetails(parsedInput.error),
@@ -168,8 +168,8 @@ export async function executeAction<TInput, TOutput, TDatabase>(
   const result = await definition.run(ctx, parsedInput.data)
   const parsedOutput = definition.output.safeParse(result)
   if (!parsedOutput.success) {
-    throw new LoomRuntimeError(500, {
-      code: "loom3002",
+    throw new LoomStackRuntimeError(500, {
+      code: "loomstack3002",
       message: "Action output validation failed.",
       operation: definition.name,
       details: validationDetails(parsedOutput.error),
@@ -188,8 +188,8 @@ export async function executeQuery<TInput, TOutput, TDatabase>(
   if (definition.input) {
     const parsedInput = definition.input.safeParse(rawInput)
     if (!parsedInput.success) {
-      throw new LoomRuntimeError(400, {
-        code: "loom3001",
+      throw new LoomStackRuntimeError(400, {
+        code: "loomstack3001",
         message: "Query input validation failed.",
         operation: definition.name,
         details: validationDetails(parsedInput.error),
@@ -202,8 +202,8 @@ export async function executeQuery<TInput, TOutput, TDatabase>(
   const result = await definition.run(ctx, input)
   const parsedOutput = definition.output.safeParse(result)
   if (!parsedOutput.success) {
-    throw new LoomRuntimeError(500, {
-      code: "loom3002",
+    throw new LoomStackRuntimeError(500, {
+      code: "loomstack3002",
       message: "Query output validation failed.",
       operation: definition.name,
       details: validationDetails(parsedOutput.error),
@@ -221,7 +221,7 @@ export function view<T>(definition: T): Readonly<T> {
   return Object.freeze(definition)
 }
 
-export interface LoomConfigInput {
+export interface LoomStackConfigInput {
   appName: string
   packageManager: "pnpm"
   frontend: "react"
@@ -231,9 +231,8 @@ export interface LoomConfigInput {
   generatedDir: string
 }
 
-export function defineLoomConfig<const T extends LoomConfigInput>(config: T): T {
+export function defineLoomStackConfig<const T extends LoomStackConfigInput>(config: T): T {
   return Object.freeze(config)
 }
 
-export const defineloomConfig = defineLoomConfig
 export { z }

@@ -1,5 +1,5 @@
-import { action, schema, text } from "@loom/runtime"
-import type { Database } from "@loom/postgres"
+import { action, schema, text } from "@loomstack/runtime"
+import type { Database } from "@loomstack/postgres"
 import { PersonSchema } from "../model.schema.js"
 
 export const CreatePersonInput = schema({

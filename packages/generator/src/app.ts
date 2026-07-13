@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync } from "node:fs"
 import { join, resolve } from "node:path"
-import { frameworkError } from "@loom/core"
+import { frameworkError } from "@loomstack/core"
 import { appTemplateFiles } from "./app-template.js"
 import { writeProjectFile } from "./files.js"
 import { generateProject } from "./generate.js"
@@ -17,14 +17,14 @@ export interface CreateAppResult {
 
 export function createApp(parentInput: string, appName: string): CreateAppResult {
   if (!APP_NAME.test(appName)) {
-    throw new GeneratorFailure([frameworkError("loom5003", {
+    throw new GeneratorFailure([frameworkError("loomstack5003", {
       message: `App names must be lowercase kebab-case: ${appName}.`
     })])
   }
   const parent = resolve(parentInput)
   const root = join(parent, appName)
   if (existsSync(root)) {
-    throw new GeneratorFailure([frameworkError("loom5002", { message: `Target directory already exists: ${appName}.`, file: appName })])
+    throw new GeneratorFailure([frameworkError("loomstack5002", { message: `Target directory already exists: ${appName}.`, file: appName })])
   }
   mkdirSync(root, { recursive: false })
   const files = appTemplateFiles(appName)

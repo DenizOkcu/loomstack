@@ -1,5 +1,5 @@
 {
-  "generatedBy": "loom",
+  "generatedBy": "loomstack",
   "doNotEdit": true,
   "project": {
     "name": "manager-crm",
@@ -15,7 +15,7 @@
   },
   "commands": {
     "dev": "pnpm dev",
-    "verify": "pnpm loom verify",
+    "verify": "pnpm loomstack verify",
     "test": "pnpm test",
     "typecheck": "pnpm typecheck"
   },
@@ -33,17 +33,17 @@
     {
       "id": "no-db-in-ui",
       "description": "React UI files may not import database code.",
-      "errorCode": "loom2001"
+      "errorCode": "loomstack2001"
     },
     {
       "id": "no-fetch-in-ui",
       "description": "React UI files may not call raw fetch.",
-      "errorCode": "loom2002"
+      "errorCode": "loomstack2002"
     },
     {
       "id": "transport-independent-features",
       "description": "Feature logic may not import Koa.",
-      "errorCode": "loom2003"
+      "errorCode": "loomstack2003"
     }
   ]
 }

@@ -1,5 +1,5 @@
-import { array, query, schema } from "@loom/runtime"
-import type { Database } from "@loom/postgres"
+import { array, query, schema } from "@loomstack/runtime"
+import type { Database } from "@loomstack/postgres"
 import { ProjectSchema } from "../model.schema.js"
 import type { Project } from "../model.schema.js"
 

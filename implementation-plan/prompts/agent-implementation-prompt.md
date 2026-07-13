@@ -1,9 +1,9 @@
 # Agent Implementation Prompt
 
-Use this prompt when asking an agentic coding agent to implement loom.
+Use this prompt when asking an agentic coding agent to implement loomstack.
 
 ```txt
-You are implementing loom: Agent-Operable Fullstack Framework.
+You are implementing loomstack: Agent-Operable Fullstack Framework.
 
 Read these files first:
 
@@ -14,7 +14,7 @@ Read these files first:
 5. docs/14-v0-1-acceptance-criteria.md
 
 Core thesis:
-loom is a TypeScript fullstack framework optimized for coding-agent reliability. It uses React + Vite frontend, Koa backend, schema-first feature contracts, action/query runtime, generated wiring, structured verification, and generated agent context.
+loomstack is a TypeScript fullstack framework optimized for coding-agent reliability. It uses React + Vite frontend, Koa backend, schema-first feature contracts, action/query runtime, generated wiring, structured verification, and generated agent context.
 
 Implementation rule:
 Work phase by phase from docs/13-implementation-phases.md. Implement one vertical slice at a time. Do not skip tests. Do not introduce non-goal features.

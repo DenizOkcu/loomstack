@@ -21,4 +21,4 @@ People product capability.
 
 ## Verify
 
-`pnpm loom verify feature people --json`
+`pnpm loomstack verify feature people --json`

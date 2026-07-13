@@ -6,13 +6,13 @@ const root = fileURLToPath(new URL(".", import.meta.url))
 export default defineConfig({
   resolve: {
     alias: {
-      "@loom/core": `${root}packages/core/src/index.ts`,
-      "@loom/runtime": `${root}packages/runtime/src/index.ts`,
-      "@loom/generator": `${root}packages/generator/src/index.ts`,
-      "@loom/verifier": `${root}packages/verifier/src/index.ts`,
-      "@loom/react": `${root}packages/react-adapter/src/index.tsx`,
-      "@loom/koa": `${root}packages/koa-adapter/src/index.ts`,
-      "@loom/postgres": `${root}packages/postgres-adapter/src/index.ts`
+      "@loomstack/core": `${root}packages/core/src/index.ts`,
+      "@loomstack/runtime": `${root}packages/runtime/src/index.ts`,
+      "@loomstack/generator": `${root}packages/generator/src/index.ts`,
+      "@loomstack/verifier": `${root}packages/verifier/src/index.ts`,
+      "@loomstack/react": `${root}packages/react-adapter/src/index.tsx`,
+      "@loomstack/koa": `${root}packages/koa-adapter/src/index.ts`,
+      "@loomstack/postgres": `${root}packages/postgres-adapter/src/index.ts`
     }
   },
   test: {

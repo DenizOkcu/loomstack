@@ -1,6 +1,6 @@
-# loom — Agent-Operable Fullstack Framework Implementation Plan
+# loomstack — Agent-Operable Fullstack Framework Implementation Plan
 
-loom is an **Agent-Operable Fullstack Framework**: a TypeScript fullstack framework optimized for coding-agent reliability instead of human flexibility.
+loomstack is an **Agent-Operable Fullstack Framework**: a TypeScript fullstack framework optimized for coding-agent reliability instead of human flexibility.
 
 The v0.1 golden path uses:
 
@@ -17,13 +17,13 @@ The v0.1 golden path uses:
 
 Modern fullstack frameworks are flexible but ambiguous. Coding agents lose time and accuracy because they must infer where code belongs, which patterns are valid, which files are related, and how to repair errors.
 
-loom makes applications **operable by agents** by making architecture explicit, queryable, enforceable, and repairable.
+loomstack makes applications **operable by agents** by making architecture explicit, queryable, enforceable, and repairable.
 
 ## Core promise
 
 > Less ambiguity. Fewer wrong edits. Faster agent iteration.
 
-A coding agent working in an loom project should always know:
+A coding agent working in an loomstack project should always know:
 
 - where code belongs
 - what files are related
@@ -84,7 +84,7 @@ A user asks a coding agent:
 
 > Add a due date field to commitments and show overdue commitments first.
 
-In an loom app, the agent should need to inspect only the relevant feature context and should modify a predictable set of files:
+In an loomstack app, the agent should need to inspect only the relevant feature context and should modify a predictable set of files:
 
 ```txt
 features/commitments/feature.yaml
@@ -99,9 +99,9 @@ features/commitments/tests/list-commitments.test.ts
 The framework should guide the agent through:
 
 ```bash
-loom context feature commitments
-loom affected features/commitments/model.schema.ts
-loom verify feature commitments --json
+loomstack context feature commitments
+loomstack affected features/commitments/model.schema.ts
+loomstack verify feature commitments --json
 ```
 
 That is the product.

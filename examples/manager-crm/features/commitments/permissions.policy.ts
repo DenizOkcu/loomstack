@@ -1,4 +1,4 @@
-import { policy } from "@loom/runtime"
+import { policy } from "@loomstack/runtime"
 import type { Commitment } from "./model.schema.js"
 
 export const commitmentsPolicy = policy({

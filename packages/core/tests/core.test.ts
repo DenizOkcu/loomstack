@@ -5,8 +5,8 @@ import { describe, expect, it } from "vitest"
 import { frameworkError, scanProject, serializeFrameworkError } from "../src/index.js"
 
 function project() {
-  const root = mkdtempSync(join(tmpdir(), "loom-core-"))
-  writeFileSync(join(root, "loom.config.ts"), `export default { appName: "test", packageManager: "pnpm", frontend: "react", backend: "koa", database: "postgres", featuresDir: "features", generatedDir: ".loom" }`)
+  const root = mkdtempSync(join(tmpdir(), "loomstack-core-"))
+  writeFileSync(join(root, "loomstack.config.ts"), `export default { appName: "test", packageManager: "pnpm", frontend: "react", backend: "koa", database: "postgres", featuresDir: "features", generatedDir: ".loomstack" }`)
   mkdirSync(join(root, "features/people/actions"), { recursive: true })
   mkdirSync(join(root, "features/people/queries"), { recursive: true })
   mkdirSync(join(root, "features/people/ui"), { recursive: true })
@@ -21,8 +21,8 @@ function project() {
 
 describe("core", () => {
   it("serializes stable repairable errors", () => {
-    expect(serializeFrameworkError(frameworkError("loom2001", { file: "features/people/ui/list.view.tsx" }))).toEqual(expect.objectContaining({
-      code: "loom2001",
+    expect(serializeFrameworkError(frameworkError("loomstack2001", { file: "features/people/ui/list.view.tsx" }))).toEqual(expect.objectContaining({
+      code: "loomstack2001",
       severity: "error",
       file: "features/people/ui/list.view.tsx",
       repair: expect.any(String)
@@ -47,6 +47,6 @@ describe("core", () => {
     writeFileSync(join(root, "features/projects/feature.yaml"), `id: projects\nname: Projects\nentities: []\nroutes:\n  - id: two\n    path: /same\n    view: View\nactions: []\nqueries: []\n`)
     mkdirSync(join(root, "features/wrong-folder"))
     writeFileSync(join(root, "features/wrong-folder/feature.yaml"), `id: contacts\nname: Contacts\nentities: []\nroutes: []\nactions: []\nqueries: []\n`)
-    expect(scanProject(root).errors.map((error) => error.code)).toEqual(expect.arrayContaining(["loom1001", "loom1005"]))
+    expect(scanProject(root).errors.map((error) => error.code)).toEqual(expect.arrayContaining(["loomstack1001", "loomstack1005"]))
   })
 })

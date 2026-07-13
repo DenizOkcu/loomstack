@@ -2,9 +2,9 @@
 
 Run every prompt against `examples/manager-crm` and an equivalent unconstrained React/Koa app. Give agents the same model, prompt, time, and tool access. Record success, files read/edited, irrelevant edits, failed checks, repair loops, tokens, elapsed time, and human intervention.
 
-Before each loom task, the agent may use `loom context feature`, `loom affected`, and scoped verification. Reset both repositories to identical baseline commits between tasks.
+Before each loomstack task, the agent may use `loomstack context feature`, `loomstack affected`, and scoped verification. Reset both repositories to identical baseline commits between tasks.
 
-| # | Prompt | Expected loom edit path |
+| # | Prompt | Expected loomstack edit path |
 |---|---|---|
 | 1 | Add due dates to commitments and show overdue commitments first. | `commitments/feature.yaml`, schema, create action, list query, view, tests |
 | 2 | Add private notes to people visible only to owners. | people schema, create/update actions, read query, policy, view, tests |

@@ -1,5 +1,5 @@
 import type Koa from "koa"
-import { PostgresDatabase } from "@loom/postgres"
+import { PostgresDatabase } from "@loomstack/postgres"
 
 export const db = new PostgresDatabase()
 

@@ -2,25 +2,25 @@ import type Koa from "koa"
 import {
   executeAction,
   executeQuery,
-  LoomRuntimeError
-} from "@loom/runtime"
+  LoomStackRuntimeError
+} from "@loomstack/runtime"
 import type {
   ActionDefinition,
-  LoomRequestContext,
+  LoomStackRequestContext,
   QueryDefinition
-} from "@loom/runtime"
+} from "@loomstack/runtime"
 
 type AnyAction = ActionDefinition<any, any, any>
 type AnyQuery = QueryDefinition<any, any, any>
 
-export interface LoomRouteOptions {
+export interface LoomStackRouteOptions {
   actionRegistry: Record<string, AnyAction>
   queryRegistry: Record<string, AnyQuery>
-  createRequestContext: (ctx: Koa.Context) => Promise<LoomRequestContext<any>> | LoomRequestContext<any>
+  createRequestContext: (ctx: Koa.Context) => Promise<LoomStackRequestContext<any>> | LoomStackRequestContext<any>
 }
 
 function operationFromPath(path: string): { kind: "action" | "query"; name: string } | undefined {
-  const match = path.match(/^\/_loom\/(actions|queries)\/([^/]+)$/)
+  const match = path.match(/^\/_loomstack\/(actions|queries)\/([^/]+)$/)
   if (!match?.[1] || !match[2]) return undefined
   try {
     return { kind: match[1] === "actions" ? "action" : "query", name: decodeURIComponent(match[2]) }
@@ -33,20 +33,20 @@ function unknownOperation(ctx: Koa.Context, kind: "action" | "query", name: stri
   ctx.status = 404
   ctx.body = {
     error: {
-      code: kind === "action" ? "loom4040" : "loom4041",
+      code: kind === "action" ? "loomstack4040" : "loomstack4041",
       message: `Unknown ${kind}: ${name}`,
-      repair: `Use a ${kind} name declared in feature.yaml and run loom generate.`
+      repair: `Use a ${kind} name declared in feature.yaml and run loomstack generate.`
     }
   }
 }
 
-export function registerLoomRoutes(app: Koa, options: LoomRouteOptions): void {
+export function registerLoomStackRoutes(app: Koa, options: LoomStackRouteOptions): void {
   app.use(async (ctx, next) => {
     const operation = operationFromPath(ctx.path)
     if (!operation) return next()
     if (ctx.method !== "POST") {
       ctx.status = 405
-      ctx.body = { error: { code: "loom4050", message: "loom RPC endpoints require POST.", repair: "Send this request with HTTP POST." } }
+      ctx.body = { error: { code: "loomstack4050", message: "loomstack RPC endpoints require POST.", repair: "Send this request with HTTP POST." } }
       return
     }
 
@@ -67,7 +67,7 @@ export function registerLoomRoutes(app: Koa, options: LoomRouteOptions): void {
         : await executeQuery(definition as AnyQuery, requestContext, body)
       ctx.status = 200
     } catch (error) {
-      if (error instanceof LoomRuntimeError) {
+      if (error instanceof LoomStackRuntimeError) {
         ctx.status = error.status
         ctx.body = { error: error.body }
         return
@@ -75,7 +75,7 @@ export function registerLoomRoutes(app: Koa, options: LoomRouteOptions): void {
       ctx.status = 500
       ctx.body = {
         error: {
-          code: "loom3002",
+          code: "loomstack3002",
           message: "Unexpected operation failure.",
           repair: "Inspect API logs and ensure the operation returns its declared output schema."
         }

@@ -14,12 +14,12 @@ describe("action/query runtime", () => {
     })
 
     await expect(executeAction(greet, context, { name: "Ada" })).resolves.toEqual({ greeting: "Hello Ada" })
-    await expect(executeAction(greet, context, { name: "" })).rejects.toMatchObject({ body: { code: "loom3001" } })
+    await expect(executeAction(greet, context, { name: "" })).rejects.toMatchObject({ body: { code: "loomstack3001" } })
   })
 
   it("validates query output", async () => {
     const broken = query({ name: "broken", output: schema({ value: text() }), run: () => ({ value: 1 as unknown as string }) })
-    await expect(executeQuery(broken, context, undefined)).rejects.toMatchObject({ body: { code: "loom3002" } })
+    await expect(executeQuery(broken, context, undefined)).rejects.toMatchObject({ body: { code: "loomstack3002" } })
   })
 
   it("enforces authenticated operations", async () => {
@@ -30,6 +30,6 @@ describe("action/query runtime", () => {
       auth: "authenticated",
       run: (_ctx, input) => input
     })
-    await expect(executeAction(secured, context, { value: "x" })).rejects.toMatchObject({ body: { code: "loom3003" } })
+    await expect(executeAction(secured, context, { value: "x" })).rejects.toMatchObject({ body: { code: "loomstack3003" } })
   })
 })

@@ -2,15 +2,15 @@
 
 ## Category
 
-loom defines the category **Agent-Operable Fullstack Framework**.
+loomstack defines the category **Agent-Operable Fullstack Framework**.
 
 An Agent-Operable Fullstack Framework is a web application framework whose architecture, conventions, commands, errors, and documentation are designed so autonomous coding agents can understand, modify, verify, and extend applications with minimal ambiguity.
 
 ## Positioning
 
-loom is not “a framework with AI features.”
+loomstack is not “a framework with AI features.”
 
-loom is a framework where the primary operator is a coding agent and the human defines intent.
+loomstack is a framework where the primary operator is a coding agent and the human defines intent.
 
 The framework is designed around this exchange:
 
@@ -23,11 +23,11 @@ Agent: Queries the framework context, edits the canonical files, runs verificati
 
 The buyer/user is still a human developer or technical founder. The primary operator during implementation tasks is an AI coding agent.
 
-loom serves users who want to delegate larger code changes to agents without constant correction.
+loomstack serves users who want to delegate larger code changes to agents without constant correction.
 
 ## Core product promise
 
-> loom reduces the search space for coding agents.
+> loomstack reduces the search space for coding agents.
 
 This should result in:
 
@@ -55,7 +55,7 @@ Common issues in human-first frameworks:
 - error messages optimized for humans, not automated repair
 - documentation disconnected from actual repository state
 
-loom solves these by making the application inspectable, enforceable, and repairable.
+loomstack solves these by making the application inspectable, enforceable, and repairable.
 
 ## Design manifesto
 
@@ -72,13 +72,13 @@ loom solves these by making the application inspectable, enforceable, and repair
 
 ## v0.1 product scope
 
-loom v0.1 should prove that a coding agent can reliably modify a fullstack app by following framework-generated context.
+loomstack v0.1 should prove that a coding agent can reliably modify a fullstack app by following framework-generated context.
 
 It does not need broad ecosystem support. It needs one excellent golden path.
 
 ## North-star task
 
-Given an example loom app, an agent should be able to complete this task reliably:
+Given an example loomstack app, an agent should be able to complete this task reliably:
 
 > Add a due date to commitments and sort overdue commitments first.
 
@@ -94,7 +94,7 @@ The agent should know:
 
 ## Success metric
 
-loom succeeds if the same coding agent performs better in an loom project than in an equivalent unconstrained React/Koa project.
+loomstack succeeds if the same coding agent performs better in an loomstack project than in an equivalent unconstrained React/Koa project.
 
 Measure:
 
@@ -109,7 +109,7 @@ Measure:
 
 ## Naming
 
-Working CLI/package name: `loom`.
+Working CLI/package name: `loomstack`.
 
 Possible public names:
 
@@ -120,4 +120,4 @@ Possible public names:
 - Railforge
 - Framepath
 
-Implementation docs should use `loom` until a final name is chosen.
+Implementation docs should use `loomstack` until a final name is chosen.

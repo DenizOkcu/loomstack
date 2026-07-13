@@ -1,11 +1,11 @@
-import { defineLoomConfig } from "@loom/runtime"
+import { defineLoomStackConfig } from "@loomstack/runtime"
 
-export default defineLoomConfig({
+export default defineLoomStackConfig({
   appName: "manager-crm",
   packageManager: "pnpm",
   frontend: "react",
   backend: "koa",
   database: "postgres",
   featuresDir: "features",
-  generatedDir: ".loom"
+  generatedDir: ".loomstack"
 })

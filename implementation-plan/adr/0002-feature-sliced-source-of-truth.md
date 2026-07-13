@@ -10,7 +10,7 @@ Coding agents perform poorly when product behavior is spread across routes, cont
 
 ## Decision
 
-loom apps will use feature-sliced architecture. Product behavior lives under `features/*`.
+loomstack apps will use feature-sliced architecture. Product behavior lives under `features/*`.
 
 Canonical feature structure:
 

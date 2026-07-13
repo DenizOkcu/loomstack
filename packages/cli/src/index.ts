@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { spawnSync } from "node:child_process"
-import { existsSync } from "node:fs"
+import { existsSync, realpathSync } from "node:fs"
 import { relative, resolve } from "node:path"
 import { pathToFileURL } from "node:url"
 import { Command, CommanderError } from "commander"
@@ -11,10 +11,10 @@ import {
   frameworkError,
   scanProject,
   toProjectPath
-} from "@loom/core"
-import type { FrameworkError, LoomProject, ScannedFeature } from "@loom/core"
-import { createApp, createFeature, generateProject, GeneratorFailure } from "@loom/generator"
-import { verifyProject } from "@loom/verifier"
+} from "@loomstack/core"
+import type { FrameworkError, LoomStackProject, ScannedFeature } from "@loomstack/core"
+import { createApp, createFeature, generateProject, GeneratorFailure } from "@loomstack/generator"
+import { verifyProject } from "@loomstack/verifier"
 
 export interface CliIO {
   stdout: (text: string) => void
@@ -30,22 +30,22 @@ interface GlobalOptions {
 
 function errorsFrom(error: unknown): FrameworkError[] {
   if (error instanceof GeneratorFailure) return error.errors
-  return [frameworkError("loom5003", { message: error instanceof Error ? error.message : String(error) })]
+  return [frameworkError("loomstack5003", { message: error instanceof Error ? error.message : String(error) })]
 }
 
 function projectRoot(cwd: string): string {
   const root = discoverProjectRoot(cwd)
-  if (!root) throw new GeneratorFailure([frameworkError("loom5001", { file: "loom.config.ts" })])
+  if (!root) throw new GeneratorFailure([frameworkError("loomstack5001", { file: "loomstack.config.ts" })])
   return root
 }
 
-function projectOrThrow(root: string): LoomProject {
+function projectOrThrow(root: string): LoomStackProject {
   const result = scanProject(root)
   if (!result.project || result.errors.length) throw new GeneratorFailure(result.errors)
   return result.project
 }
 
-function projectContext(project: LoomProject) {
+function projectContext(project: LoomStackProject) {
   return {
     project: {
       name: project.config.appName,
@@ -54,7 +54,7 @@ function projectContext(project: LoomProject) {
       database: project.config.database,
       packageManager: project.config.packageManager
     },
-    commands: { dev: "pnpm dev", verify: "pnpm loom verify", test: "pnpm test", typecheck: "pnpm typecheck" },
+    commands: { dev: "pnpm dev", verify: "pnpm loomstack verify", test: "pnpm test", typecheck: "pnpm typecheck" },
     features: project.features.map((feature) => feature.id),
     rules: [
       "Product behavior lives in features/*/actions or features/*/queries.",
@@ -79,12 +79,12 @@ function featureContext(feature: ScannedFeature) {
       "Mutations belong in actions/*.action.ts.",
       "Reads belong in queries/*.query.ts.",
       "Do not access the database or raw fetch from UI files.",
-      `Verify with pnpm loom verify feature ${feature.id} --json.`
+      `Verify with pnpm loomstack verify feature ${feature.id} --json.`
     ]
   }
 }
 
-function affected(project: LoomProject, fileInput: string) {
+function affected(project: LoomStackProject, fileInput: string) {
   const absolute = resolve(project.root, fileInput)
   const file = toProjectPath(relative(project.root, absolute))
   const feature = project.features.find((candidate) => file === candidate.directory || file.startsWith(`${candidate.directory}/`))
@@ -93,7 +93,7 @@ function affected(project: LoomProject, fileInput: string) {
       file,
       feature: null,
       affected: project.features.flatMap((candidate) => [candidate.manifestPath]),
-      recommendedVerification: "pnpm loom verify"
+      recommendedVerification: "pnpm loomstack verify"
     }
   }
   const authored = [
@@ -109,7 +109,7 @@ function affected(project: LoomProject, fileInput: string) {
     file,
     feature: feature.id,
     affected: authored,
-    recommendedVerification: `pnpm loom verify feature ${feature.id}`
+    recommendedVerification: `pnpm loomstack verify feature ${feature.id}`
   }
 }
 
@@ -128,7 +128,7 @@ export async function runCli(argv: string[], io: CliIO = {
   let exitCode = 0
   const program = new Command()
   program
-    .name("loom")
+    .name("loomstack")
     .description("Agent-operable fullstack framework")
     .version("0.1.0")
     .option("--json", "emit machine-readable JSON")
@@ -162,9 +162,9 @@ export async function runCli(argv: string[], io: CliIO = {
     }
   }
 
-  const create = program.command("create").description("create canonical loom resources")
-  create.command("app <name>").description("create a loom application").action(async (name: string) => {
-    await execute(() => ({ ...createApp(cwd(), name) }), (result) => `Created loom app: ${result.appName as string}\nNext steps:\n  ${(result.nextCommands as string[]).join("\n  ")}`)
+  const create = program.command("create").description("create canonical loomstack resources")
+  create.command("app <name>").description("create a loomstack application").action(async (name: string) => {
+    await execute(() => ({ ...createApp(cwd(), name) }), (result) => `Created loomstack app: ${result.appName as string}\nNext steps:\n  ${(result.nextCommands as string[]).join("\n  ")}`)
   })
   create.command("feature <name>").description("create a canonical feature").action(async (name: string) => {
     await execute(() => {
@@ -183,14 +183,14 @@ export async function runCli(argv: string[], io: CliIO = {
   context.action(async () => {
     await execute(() => projectContext(projectOrThrow(projectRoot(cwd()))), () => {
       const project = projectOrThrow(projectRoot(cwd()))
-      return `loom project: ${project.config.appName}\nFeatures: ${project.features.map((feature) => feature.id).join(", ") || "none"}`
+      return `loomstack project: ${project.config.appName}\nFeatures: ${project.features.map((feature) => feature.id).join(", ") || "none"}`
     })
   })
   context.command("feature <name>").description("show context for one feature").action(async (name: string) => {
     await execute(() => {
       const project = projectOrThrow(projectRoot(cwd()))
       const feature = project.features.find((candidate) => candidate.id === name)
-      if (!feature) throw new GeneratorFailure([frameworkError("loom1002", { message: `Unknown feature: ${name}.` })])
+      if (!feature) throw new GeneratorFailure([frameworkError("loomstack1002", { message: `Unknown feature: ${name}.` })])
       return featureContext(feature)
     }, (result) => `Feature: ${result.feature as string}\nManifest: ${result.manifest as string}`)
   })
@@ -213,26 +213,26 @@ export async function runCli(argv: string[], io: CliIO = {
     emit(result as unknown as Record<string, unknown>, result.ok ? `Feature ${name} passed verification.` : humanErrors(result.errors), !result.ok)
   })
 
-  program.command("explain <code>").description("explain a stable loom error code").action(async (code: string) => {
+  program.command("explain <code>").description("explain a stable loomstack error code").action(async (code: string) => {
     await execute(() => {
       const explanation = explainError(code)
-      if (!explanation) throw new GeneratorFailure([frameworkError("loom5003", { message: `Unknown error code: ${code}.` })])
+      if (!explanation) throw new GeneratorFailure([frameworkError("loomstack5003", { message: `Unknown error code: ${code}.` })])
       return explanation
     }, (result) => `${result.code as string}: ${result.title as string}\n${result.why as string}\nRepair: ${result.repair as string}`)
   })
 
-  program.command("doctor").description("check the local loom environment").action(async () => {
+  program.command("doctor").description("check the local loomstack environment").action(async () => {
     await execute(() => {
       const root = discoverProjectRoot(cwd())
       const pnpm = spawnSync("pnpm", ["--version"], { encoding: "utf8" })
       const checks = {
         node: { ok: Number(process.versions.node.split(".")[0]) >= 22, version: process.versions.node },
         pnpm: { ok: pnpm.status === 0, version: pnpm.stdout.trim() || null },
-        config: { ok: Boolean(root), path: root ? toProjectPath(relative(cwd(), resolve(root, "loom.config.ts"))) || "loom.config.ts" : null },
+        config: { ok: Boolean(root), path: root ? toProjectPath(relative(cwd(), resolve(root, "loomstack.config.ts"))) || "loomstack.config.ts" : null },
         typescript: { ok: root ? existsSync(resolve(root, "tsconfig.json")) : false }
       }
       return { healthy: Object.values(checks).every((check) => check.ok), checks }
-    }, (result) => (result.healthy ? "loom doctor found no problems." : "loom doctor found environment problems."))
+    }, (result) => (result.healthy ? "loomstack doctor found no problems." : "loomstack doctor found environment problems."))
   })
 
   try {
@@ -245,7 +245,7 @@ export async function runCli(argv: string[], io: CliIO = {
   return exitCode
 }
 
-const invokedPath = process.argv[1] ? pathToFileURL(resolve(process.argv[1])).href : ""
+const invokedPath = process.argv[1] ? pathToFileURL(realpathSync(resolve(process.argv[1]))).href : ""
 if (import.meta.url === invokedPath) {
   runCli(process.argv.slice(2)).then((code) => { process.exitCode = code }).catch((error) => {
     console.error(error)

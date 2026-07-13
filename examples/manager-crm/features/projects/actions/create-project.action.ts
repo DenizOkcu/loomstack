@@ -1,5 +1,5 @@
-import { action, oneOf, schema, text } from "@loom/runtime"
-import type { Database } from "@loom/postgres"
+import { action, oneOf, schema, text } from "@loomstack/runtime"
+import type { Database } from "@loomstack/postgres"
 import { ProjectSchema } from "../model.schema.js"
 
 export const CreateProjectInput = schema({

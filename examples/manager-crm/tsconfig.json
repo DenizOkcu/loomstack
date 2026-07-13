@@ -22,6 +22,6 @@
     "features/**/*.ts",
     "features/**/*.tsx",
     "shared/**/*.ts",
-    "loom.config.ts"
+    "loomstack.config.ts"
   ]
 }

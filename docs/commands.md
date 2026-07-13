@@ -1,4 +1,4 @@
-# loom CLI contracts
+# loomstack CLI contracts
 
 ## Global options
 
@@ -8,21 +8,21 @@ Failures return a non-zero exit code. Every framework error contains `code`, `se
 
 ## Creation
 
-### `loom create app <name>`
+### `loomstack create app <name>`
 
 Creates a kebab-case app without overwriting an existing directory. JSON fields: `ok`, `appName`, `root`, `createdFiles`, `nextCommands`.
 
-### `loom create feature <name>`
+### `loomstack create feature <name>`
 
 Creates `feature.yaml`, local `AGENTS.md`, schema/policy files, and action/query/UI/test directories. It refreshes generated output. JSON fields: `ok`, `feature`, `createdFiles`.
 
 ## Generation and verification
 
-### `loom generate`
+### `loomstack generate`
 
 Scans all features and deterministically regenerates React routes, API client, Koa routes, four registries, four context documents, and the generated-file hash manifest.
 
-### `loom verify [feature <name>]`
+### `loomstack verify [feature <name>]`
 
 Checks config, YAML shape, feature ownership, route uniqueness, manifest/implementation consistency, entity/view resolution, duplicate operation names, forbidden imports, raw fetch, generated markers, hashes, and freshness.
 
@@ -36,28 +36,28 @@ Use feature scope for repair loops; use project scope before completion.
 
 ## Context
 
-### `loom context`
+### `loomstack context`
 
 Returns stack, commands, feature IDs, and global architectural rules.
 
-### `loom context feature <name>`
+### `loomstack context feature <name>`
 
 Returns the manifest, description, entities, named action/query/view files, tests, and scoped rules. This is the first command an agent should run before editing a feature.
 
-### `loom graph`
+### `loomstack graph`
 
 Returns deterministic feature nodes and explicit dependencies. Cross-feature dependencies are empty in v0.1 because direct cross-feature imports are not part of the golden path.
 
-### `loom affected <file>`
+### `loomstack affected <file>`
 
 Returns the owning feature, all likely related authored contracts, and the recommended verification command. Files outside a feature conservatively affect all manifests.
 
-### `loom explain <code>`
+### `loomstack explain <code>`
 
-Returns the stable error title, reason, repair, and documentation reference. Code ranges are: `loom1xxx` manifests, `loom2xxx` boundaries, `loom3xxx` runtime, `loom4xxx` generation, `loom5xxx` project/CLI, and `loom6xxx` PostgreSQL schema concerns.
+Returns the stable error title, reason, repair, and documentation reference. Code ranges are: `loomstack1xxx` manifests, `loomstack2xxx` boundaries, `loomstack3xxx` runtime, `loomstack4xxx` generation, `loomstack5xxx` project/CLI, and `loomstack6xxx` PostgreSQL schema concerns.
 
 ## Environment
 
-### `loom doctor`
+### `loomstack doctor`
 
-Checks Node 22+, pnpm, `loom.config.ts`, and `tsconfig.json`. It does not modify the environment.
+Checks Node 22+, pnpm, `loomstack.config.ts`, and `tsconfig.json`. It does not modify the environment.

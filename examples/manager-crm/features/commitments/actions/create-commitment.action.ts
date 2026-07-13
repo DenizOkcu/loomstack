@@ -1,5 +1,5 @@
-import { action, id, schema, text, timestamp } from "@loom/runtime"
-import type { Database } from "@loom/postgres"
+import { action, id, schema, text, timestamp } from "@loomstack/runtime"
+import type { Database } from "@loomstack/postgres"
 import { CommitmentSchema } from "../model.schema.js"
 
 export const CreateCommitmentInput = schema({

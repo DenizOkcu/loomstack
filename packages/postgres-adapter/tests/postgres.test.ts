@@ -11,7 +11,7 @@ describe("PostgreSQL adapters", () => {
   })
 
   it("configures a PostgreSQL pool without connecting eagerly", async () => {
-    const db = new PostgresDatabase({ connectionString: "postgresql://localhost/loom_test" })
+    const db = new PostgresDatabase({ connectionString: "postgresql://localhost/loomstack_test" })
     expect(db.pool.totalCount).toBe(0)
     await db.close()
   })

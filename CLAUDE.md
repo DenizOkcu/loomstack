@@ -1,6 +1,6 @@
-# loom agent memory
+# loomstack agent memory
 
-loom reduces the search space for coding agents.
+loomstack reduces the search space for coding agents.
 
 ```text
 React = presentation

@@ -1,23 +1,23 @@
 # 14 — v0.1 Acceptance Criteria
 
-loom v0.1 is complete when it proves the core thesis: a fullstack app can be made more reliable for coding agents through explicit contracts, generated wiring, and structured verification.
+loomstack v0.1 is complete when it proves the core thesis: a fullstack app can be made more reliable for coding agents through explicit contracts, generated wiring, and structured verification.
 
 ## Required CLI commands
 
 The following must work:
 
 ```bash
-loom create app <name>
-loom create feature <name>
-loom generate
-loom verify
-loom verify --json
-loom verify feature <name> --json
-loom context --json
-loom context feature <name> --json
-loom graph --json
-loom affected <file> --json
-loom explain <error-code> --json
+loomstack create app <name>
+loomstack create feature <name>
+loomstack generate
+loomstack verify
+loomstack verify --json
+loomstack verify feature <name> --json
+loomstack context --json
+loomstack context feature <name> --json
+loomstack graph --json
+loomstack affected <file> --json
+loomstack explain <error-code> --json
 ```
 
 ## Required generated app stack
@@ -40,15 +40,15 @@ apps/web
 apps/api
 features
 shared/generated
-.loom
+.loomstack
 AGENTS.md
 CLAUDE.md
-loom.config.ts
+loomstack.config.ts
 ```
 
 ## Required feature support
 
-loom must support a feature with:
+loomstack must support a feature with:
 
 - manifest
 - entity schema
@@ -64,7 +64,7 @@ loom must support a feature with:
 
 Verifier must detect at least:
 
-1. missing loom config
+1. missing loomstack config
 2. invalid feature manifest
 3. feature ID/folder mismatch
 4. duplicate route paths
@@ -91,10 +91,10 @@ Every verifier error must include:
 Generated app must contain:
 
 ```txt
-.loom/context.json
-.loom/graph.json
-.loom/commands.json
-.loom/errors.json
+.loomstack/context.json
+.loomstack/graph.json
+.loomstack/commands.json
+.loomstack/errors.json
 ```
 
 These must be valid JSON and marked as generated.
@@ -170,12 +170,12 @@ v0.1 is done when this works from a clean environment:
 pnpm install
 pnpm test
 pnpm build
-pnpm loom create app demo-app
+pnpm loomstack create app demo-app
 cd demo-app
 pnpm install
-pnpm loom create feature people
-pnpm loom generate
-pnpm loom verify --json
+pnpm loomstack create feature people
+pnpm loomstack generate
+pnpm loomstack verify --json
 ```
 
 And the final verification result is:

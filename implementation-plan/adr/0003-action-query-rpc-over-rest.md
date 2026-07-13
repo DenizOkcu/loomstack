@@ -8,15 +8,15 @@ Accepted for v0.1.
 
 REST route design introduces naming and mapping ambiguity. Agents must infer how HTTP routes map to feature behavior.
 
-loom already models behavior as actions and queries.
+loomstack already models behavior as actions and queries.
 
 ## Decision
 
-loom v0.1 will use internal action/query RPC endpoints:
+loomstack v0.1 will use internal action/query RPC endpoints:
 
 ```txt
-POST /_loom/actions/<actionName>
-POST /_loom/queries/<queryName>
+POST /_loomstack/actions/<actionName>
+POST /_loomstack/queries/<queryName>
 ```
 
 REST generation may be added later as an optional public API feature.
@@ -26,8 +26,8 @@ REST generation may be added later as an optional public API feature.
 RPC maps directly to files and registries:
 
 ```txt
-features/people/actions/create-person.action.ts -> /_loom/actions/createPerson
-features/people/queries/list-people.query.ts -> /_loom/queries/listPeople
+features/people/actions/create-person.action.ts -> /_loomstack/actions/createPerson
+features/people/queries/list-people.query.ts -> /_loomstack/queries/listPeople
 ```
 
 This is easier for coding agents to understand and verify.

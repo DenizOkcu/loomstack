@@ -35,16 +35,16 @@ importers:
 
   examples/manager-crm:
     devDependencies:
-      '@loom/cli':
+      '@loomstack/cli':
         specifier: ^0.1.0
         version: link:../../packages/cli
-      '@loom/postgres':
+      '@loomstack/postgres':
         specifier: ^0.1.0
         version: link:../../packages/postgres-adapter
-      '@loom/react':
+      '@loomstack/react':
         specifier: ^0.1.0
         version: link:../../packages/react-adapter
-      '@loom/runtime':
+      '@loomstack/runtime':
         specifier: ^0.1.0
         version: link:../../packages/runtime
       '@types/node':
@@ -71,13 +71,13 @@ importers:
 
   examples/manager-crm/apps/api:
     dependencies:
-      '@loom/koa':
+      '@loomstack/koa':
         specifier: ^0.1.0
         version: link:../../../../packages/koa-adapter
-      '@loom/postgres':
+      '@loomstack/postgres':
         specifier: ^0.1.0
         version: link:../../../../packages/postgres-adapter
-      '@loom/runtime':
+      '@loomstack/runtime':
         specifier: ^0.1.0
         version: link:../../../../packages/runtime
       koa:
@@ -102,10 +102,10 @@ importers:
 
   examples/manager-crm/apps/web:
     dependencies:
-      '@loom/react':
+      '@loomstack/react':
         specifier: ^0.1.0
         version: link:../../../../packages/react-adapter
-      '@loom/runtime':
+      '@loomstack/runtime':
         specifier: ^0.1.0
         version: link:../../../../packages/runtime
       '@vitejs/plugin-react':
@@ -123,18 +123,22 @@ importers:
 
   packages/cli:
     dependencies:
-      '@loom/core':
-        specifier: workspace:*
-        version: link:../core
-      '@loom/generator':
-        specifier: workspace:*
-        version: link:../generator
-      '@loom/verifier':
-        specifier: workspace:*
-        version: link:../verifier
       commander:
         specifier: ^15.0.0
         version: 15.0.0
+      yaml:
+        specifier: ^2.9.0
+        version: 2.9.0
+    devDependencies:
+      '@loomstack/core':
+        specifier: workspace:*
+        version: link:../core
+      '@loomstack/generator':
+        specifier: workspace:*
+        version: link:../generator
+      '@loomstack/verifier':
+        specifier: workspace:*
+        version: link:../verifier
 
   packages/core:
     dependencies:
@@ -142,21 +146,25 @@ importers:
         specifier: ^2.8.1
         version: 2.9.0
 
-  packages/create-loom-app:
+  packages/create-loomstack-app:
     dependencies:
-      '@loom/generator':
+      yaml:
+        specifier: ^2.9.0
+        version: 2.9.0
+    devDependencies:
+      '@loomstack/generator':
         specifier: workspace:*
         version: link:../generator
 
   packages/generator:
     dependencies:
-      '@loom/core':
+      '@loomstack/core':
         specifier: workspace:*
         version: link:../core
 
   packages/koa-adapter:
     dependencies:
-      '@loom/runtime':
+      '@loomstack/runtime':
         specifier: workspace:*
         version: link:../runtime
       '@types/koa':
@@ -190,10 +198,10 @@ importers:
 
   packages/verifier:
     dependencies:
-      '@loom/core':
+      '@loomstack/core':
         specifier: workspace:*
         version: link:../core
-      '@loom/generator':
+      '@loomstack/generator':
         specifier: workspace:*
         version: link:../generator
 

@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync } from "node:fs"
 import { join, resolve } from "node:path"
-import { frameworkError, loadProjectConfig } from "@loom/core"
-import type { FrameworkError } from "@loom/core"
+import { frameworkError, loadProjectConfig } from "@loomstack/core"
+import type { FrameworkError } from "@loomstack/core"
 import { writeProjectFile } from "./files.js"
 
 const FEATURE_ID = /^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/
@@ -27,20 +27,20 @@ export interface GenerateResult {
 
 export function createFeature(rootInput: string, name: string): GenerateResult {
   const root = resolve(rootInput)
-  if (!FEATURE_ID.test(name)) throw new GeneratorFailure([frameworkError("loom1011", { message: `Invalid feature name: ${name}.` })])
+  if (!FEATURE_ID.test(name)) throw new GeneratorFailure([frameworkError("loomstack1011", { message: `Invalid feature name: ${name}.` })])
   const loaded = loadProjectConfig(root)
   if (!loaded.config) throw new GeneratorFailure(loaded.errors)
   const base = `${loaded.config.featuresDir}/${name}`
   if (existsSync(join(root, base))) {
-    throw new GeneratorFailure([frameworkError("loom5002", { message: `Feature already exists: ${name}.`, file: base })])
+    throw new GeneratorFailure([frameworkError("loomstack5002", { message: `Feature already exists: ${name}.`, file: base })])
   }
 
   const title = titleCase(name)
   const files: Record<string, string> = {
     [`${base}/feature.yaml`]: `id: ${name}\nname: ${title}\ndescription: ${title} product capability.\n\nentities: []\nroutes: []\nactions: []\nqueries: []\n`,
-    [`${base}/AGENTS.md`]: `# ${title} Feature Agent Instructions\n\n## Purpose\n\n${title} product capability.\n\n## Source of truth\n\n- Manifest: \`feature.yaml\`\n- Schema: \`model.schema.ts\`\n- Permissions: \`permissions.policy.ts\`\n\n## Rules\n\n- Mutations belong in \`actions/*.action.ts\`.\n- Reads belong in \`queries/*.query.ts\`.\n- Route UI belongs in \`ui/*.view.tsx\`.\n- Never import database or Koa modules from UI.\n- Never call raw fetch from UI.\n- Update tests with every contract change.\n\n## Verify\n\n\`pnpm loom verify feature ${name} --json\`\n`,
-    [`${base}/model.schema.ts`]: `import { entity } from "@loom/runtime"\n\n// Add and export manifest-declared entities here with entity().\nvoid entity\n`,
-    [`${base}/permissions.policy.ts`]: `import { policy } from "@loom/runtime"\n\nexport const ${camelCase(name)}Policy = policy({})\n`
+    [`${base}/AGENTS.md`]: `# ${title} Feature Agent Instructions\n\n## Purpose\n\n${title} product capability.\n\n## Source of truth\n\n- Manifest: \`feature.yaml\`\n- Schema: \`model.schema.ts\`\n- Permissions: \`permissions.policy.ts\`\n\n## Rules\n\n- Mutations belong in \`actions/*.action.ts\`.\n- Reads belong in \`queries/*.query.ts\`.\n- Route UI belongs in \`ui/*.view.tsx\`.\n- Never import database or Koa modules from UI.\n- Never call raw fetch from UI.\n- Update tests with every contract change.\n\n## Verify\n\n\`pnpm loomstack verify feature ${name} --json\`\n`,
+    [`${base}/model.schema.ts`]: `import { entity } from "@loomstack/runtime"\n\n// Add and export manifest-declared entities here with entity().\nvoid entity\n`,
+    [`${base}/permissions.policy.ts`]: `import { policy } from "@loomstack/runtime"\n\nexport const ${camelCase(name)}Policy = policy({})\n`
   }
 
   const createdFiles = Object.keys(files).sort()

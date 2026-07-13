@@ -1,5 +1,5 @@
 {
-  "name": "@loom/postgres",
+  "name": "@loomstack/postgres",
   "version": "0.1.0",
   "type": "module",
   "sideEffects": false,

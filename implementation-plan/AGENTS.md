@@ -1,8 +1,8 @@
-# AGENTS.md — loom Implementation Instructions
+# AGENTS.md — loomstack Implementation Instructions
 
-This repository is the implementation plan for **loom: Agent-Operable Fullstack Framework**.
+This repository is the implementation plan for **loomstack: Agent-Operable Fullstack Framework**.
 
-loom is not a general-purpose flexible framework. It is an opinionated TypeScript fullstack framework optimized so coding agents can safely understand, modify, verify, and extend applications.
+loomstack is not a general-purpose flexible framework. It is an opinionated TypeScript fullstack framework optimized so coding agents can safely understand, modify, verify, and extend applications.
 
 ## Mandatory implementation principles
 
@@ -40,7 +40,7 @@ packages/
   react-adapter/
   koa-adapter/
   postgres-adapter/
-  create-loom-app/
+  create-loomstack-app/
 examples/
   manager-crm/
 templates/
@@ -66,15 +66,15 @@ Every CLI command that is useful to an agent must support `--json`.
 Important commands:
 
 ```bash
-loom create app <name>
-loom create feature <name>
-loom context
-loom context feature <name>
-loom graph
-loom affected <file>
-loom verify
-loom verify feature <name>
-loom explain <error-code>
+loomstack create app <name>
+loomstack create feature <name>
+loomstack context
+loomstack context feature <name>
+loomstack graph
+loomstack affected <file>
+loomstack verify
+loomstack verify feature <name>
+loomstack explain <error-code>
 ```
 
 ## Testing expectations
