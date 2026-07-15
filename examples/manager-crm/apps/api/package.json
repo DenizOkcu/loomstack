@@ -1,6 +1,6 @@
 {
   "name": "@manager-crm/api",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,9 +8,9 @@
     "build": "tsup src/server.ts --format esm --clean"
   },
   "dependencies": {
-    "@loomstack/koa": "^0.0.1",
-    "@loomstack/runtime": "^0.0.1",
-    "@loomstack/postgres": "^0.0.1",
+    "@loomstack/koa": "^0.0.2",
+    "@loomstack/runtime": "^0.0.2",
+    "@loomstack/postgres": "^0.0.2",
     "koa": "^3.2.1",
     "koa-bodyparser": "^4.4.1"
   },

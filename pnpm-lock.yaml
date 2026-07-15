@@ -36,16 +36,16 @@ importers:
   examples/manager-crm:
     devDependencies:
       '@loomstack/cli':
-        specifier: ^0.0.1
+        specifier: ^0.0.2
         version: link:../../packages/cli
       '@loomstack/postgres':
-        specifier: ^0.0.1
+        specifier: ^0.0.2
         version: link:../../packages/postgres-adapter
       '@loomstack/react':
-        specifier: ^0.0.1
+        specifier: ^0.0.2
         version: link:../../packages/react-adapter
       '@loomstack/runtime':
-        specifier: ^0.0.1
+        specifier: ^0.0.2
         version: link:../../packages/runtime
       '@types/node':
         specifier: ^24.0.0
@@ -72,13 +72,13 @@ importers:
   examples/manager-crm/apps/api:
     dependencies:
       '@loomstack/koa':
-        specifier: ^0.0.1
+        specifier: ^0.0.2
         version: link:../../../../packages/koa-adapter
       '@loomstack/postgres':
-        specifier: ^0.0.1
+        specifier: ^0.0.2
         version: link:../../../../packages/postgres-adapter
       '@loomstack/runtime':
-        specifier: ^0.0.1
+        specifier: ^0.0.2
         version: link:../../../../packages/runtime
       koa:
         specifier: ^3.2.1
@@ -103,10 +103,10 @@ importers:
   examples/manager-crm/apps/web:
     dependencies:
       '@loomstack/react':
-        specifier: ^0.0.1
+        specifier: ^0.0.2
         version: link:../../../../packages/react-adapter
       '@loomstack/runtime':
-        specifier: ^0.0.1
+        specifier: ^0.0.2
         version: link:../../../../packages/runtime
       '@vitejs/plugin-react':
         specifier: ^6.0.3
