@@ -6,6 +6,7 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/web/package.json apps/web/package.json
 COPY apps/api/package.json apps/api/package.json
+COPY .loomstack/local-packages .loomstack/local-packages
 RUN pnpm install --frozen-lockfile
 
 COPY . .

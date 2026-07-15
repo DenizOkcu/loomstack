@@ -143,7 +143,7 @@ See the [architecture guide](docs/architecture.md) and [CLI contracts](docs/comm
 
 ## Proof app
 
-[`examples/manager-crm`](examples/manager-crm) is the repository integration fixture. It contains people, projects, and commitments vertical slices; commitments include due dates, overdue-first ordering, and a due-soon query. Its dependencies resolve to local workspace packages, so test the published npm onboarding flow in a separate directory.
+[`examples/manager-crm`](examples/manager-crm) is the repository integration fixture, recreated from the published LoomStack `0.0.2` packages. It contains people, projects, and commitments vertical slices; commitments include due dates, overdue-first ordering, and a due-soon query. Framework-root commands resolve local workspace packages, while the example's standalone lockfile resolves the published npm packages.
 
 ```bash
 pnpm loomstack --cwd examples/manager-crm verify --json
