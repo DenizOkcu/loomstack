@@ -4,6 +4,7 @@ import { createApp, GeneratorFailure } from "@loomstack/generator"
 export interface CreateLoomStackAppIO {
   stdout: (text: string) => void
   stderr: (text: string) => void
+  cwd?: () => string
 }
 
 function usage(): string {
@@ -23,7 +24,10 @@ export function runCreateLoomStackApp(
   const cwdIndex = argv.indexOf("--cwd")
   const cwdValue = cwdIndex >= 0 ? argv[cwdIndex + 1] : undefined
   const positional = argv.filter((value, index) =>
-    value !== "--json" && value !== "--cwd" && index !== cwdIndex + 1 && !value.startsWith("-")
+    value !== "--json" &&
+    value !== "--cwd" &&
+    (cwdIndex < 0 || index !== cwdIndex + 1) &&
+    !value.startsWith("-")
   )
   const name = positional[0]
 
@@ -35,7 +39,7 @@ export function runCreateLoomStackApp(
   }
 
   try {
-    const result = createApp(resolve(cwdValue ?? process.cwd()), name)
+    const result = createApp(resolve(cwdValue ?? io.cwd?.() ?? process.cwd()), name)
     if (json) io.stdout(JSON.stringify({ ok: true, data: result }))
     else {
       io.stdout(`Created loomstack app: ${result.appName}`)
