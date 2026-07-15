@@ -2,7 +2,7 @@ export function appTemplateFiles(appName: string): Record<string, string> {
   return {
     "package.json": `${JSON.stringify({
       name: appName,
-      version: "0.0.2",
+      version: "0.0.4",
       private: true,
       type: "module",
       packageManager: "pnpm@11.11.0",
@@ -19,10 +19,10 @@ export function appTemplateFiles(appName: string): Record<string, string> {
         build: "pnpm generate && pnpm -r --filter './apps/*' build"
       },
       devDependencies: {
-        "@loomstack/cli": "^0.0.2",
-        "@loomstack/react": "^0.0.2",
-        "@loomstack/runtime": "^0.0.2",
-        "@loomstack/postgres": "^0.0.2",
+        "@loomstack/cli": "^0.0.4",
+        "@loomstack/react": "^0.0.4",
+        "@loomstack/runtime": "^0.0.4",
+        "@loomstack/postgres": "^0.0.4",
         "@types/node": "^24.0.0",
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
@@ -62,13 +62,13 @@ export function appTemplateFiles(appName: string): Record<string, string> {
     "features/.gitkeep": "",
     "apps/web/package.json": `${JSON.stringify({
       name: `@${appName}/web`,
-      version: "0.0.2",
+      version: "0.0.4",
       private: true,
       type: "module",
       scripts: { dev: "vite", build: "vite build" },
       dependencies: {
-        "@loomstack/react": "^0.0.2",
-        "@loomstack/runtime": "^0.0.2",
+        "@loomstack/react": "^0.0.4",
+        "@loomstack/runtime": "^0.0.4",
         "@vitejs/plugin-react": "^6.0.3",
         react: "^19.2.7",
         "react-dom": "^19.2.7",
@@ -81,14 +81,14 @@ export function appTemplateFiles(appName: string): Record<string, string> {
     "apps/web/vite.config.ts": `import { defineConfig } from "vite"\nimport react from "@vitejs/plugin-react"\n\nexport default defineConfig({\n  plugins: [react()],\n  server: {\n    host: "0.0.0.0",\n    port: 3000,\n    proxy: { "/_loomstack": process.env.LOOMSTACK_API_URL ?? "http://localhost:3001" }\n  }\n})\n`,
     "apps/api/package.json": `${JSON.stringify({
       name: `@${appName}/api`,
-      version: "0.0.2",
+      version: "0.0.4",
       private: true,
       type: "module",
       scripts: { dev: "tsx watch src/server.ts", build: "tsup src/server.ts --format esm --clean" },
       dependencies: {
-        "@loomstack/koa": "^0.0.2",
-        "@loomstack/runtime": "^0.0.2",
-        "@loomstack/postgres": "^0.0.2",
+        "@loomstack/koa": "^0.0.4",
+        "@loomstack/runtime": "^0.0.4",
+        "@loomstack/postgres": "^0.0.4",
         koa: "^3.2.1",
         "koa-bodyparser": "^4.4.1"
       },
