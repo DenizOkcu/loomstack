@@ -1,6 +1,6 @@
 {
   "name": "create-loomstack-app",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "description": "Create a full-stack loomstack application",
   "type": "module",
   "bin": { "create-loomstack-app": "./dist/cli.js" },

@@ -1,6 +1,6 @@
 {
   "name": "manager-crm",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.11.0",
@@ -17,10 +17,10 @@
     "build": "pnpm generate && pnpm -r --filter './apps/*' build"
   },
   "devDependencies": {
-    "@loomstack/cli": "^0.1.0",
-    "@loomstack/react": "^0.1.0",
-    "@loomstack/runtime": "^0.1.0",
-    "@loomstack/postgres": "^0.1.0",
+    "@loomstack/cli": "^0.0.1",
+    "@loomstack/react": "^0.0.1",
+    "@loomstack/runtime": "^0.0.1",
+    "@loomstack/postgres": "^0.0.1",
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",

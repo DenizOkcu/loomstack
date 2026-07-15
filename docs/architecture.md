@@ -1,0 +1,161 @@
+# LoomStack architecture
+
+LoomStack is an agent-operable TypeScript fullstack framework with one supported application shape. Product behavior belongs to feature slices; React is presentation; Koa is transport; generated files contain wiring only.
+
+## Golden path
+
+- TypeScript and pnpm workspaces
+- React with Vite
+- Koa
+- PostgreSQL
+- Zod-backed schemas
+- Vitest
+
+The constrained stack is intentional. LoomStack v0.1 does not provide alternative adapters, SSR, generated REST APIs, plugins, production authentication or migrations, deployment adapters, or advanced relation modeling.
+
+## Architectural decisions
+
+Three decisions define the framework:
+
+1. **React and Koa are the only UI and transport adapters.** A single path makes generated output and agent guidance deterministic.
+2. **Feature slices are the product source of truth.** Behavior is colocated by product capability instead of technical layer.
+3. **Named actions and queries use RPC rather than generated REST resources.** Mutations and reads have explicit schemas and stable operation names.
+
+## Application structure
+
+A generated application has this shape:
+
+```text
+apps/
+  web/                  React + Vite application
+  api/                  Koa application
+features/               Authored product behavior
+shared/generated/       Generated registries
+.loomstack/             Generated context, graph, commands, errors, and hashes
+loomstack.config.ts     Golden-path project configuration
+compose.yaml            Web, API, and PostgreSQL development services
+```
+
+`loomstack.config.ts` explicitly selects `pnpm`, `react`, `koa`, and `postgres`, along with the feature and generated directories. Commands reject projects that diverge from these values.
+
+## Feature contracts
+
+Each feature owns one vertical slice:
+
+```text
+features/<feature-id>/
+  feature.yaml
+  AGENTS.md
+  model.schema.ts
+  permissions.policy.ts
+  actions/*.action.ts
+  queries/*.query.ts
+  ui/*.view.tsx
+  ui/*.component.tsx
+  ui/*.form.tsx
+  tests/*.test.ts
+```
+
+Feature IDs are lowercase kebab-case and must match their directory. `feature.yaml` declares the feature's entities, routes, actions, queries, and coarse permission intent:
+
+```yaml
+id: people
+name: People
+description: Manage people and relationship context.
+
+entities:
+  - Person
+routes:
+  - id: people-list
+    path: /people
+    view: PeopleListView
+actions:
+  - createPerson
+queries:
+  - listPeople
+permissions:
+  read: authenticated
+  write: owner
+```
+
+Manifest names and authored exports must agree. Route paths and operation names are globally unique. Use `loomstack create feature <name>` rather than constructing feature directories manually.
+
+## Schemas and persistence
+
+`@loomstack/runtime` exposes Zod-backed helpers including `entity`, `schema`, `id`, `text`, `number`, `boolean`, `timestamp`, `userId`, `array`, `oneOf`, and `optional`. Entity names are PascalCase, and TypeScript types are inferred from their schemas.
+
+The PostgreSQL adapter implements the v0.1 persistence path through `DATABASE_URL`. Persist only supported scalar fields; behavior requiring unsupported field shapes must use explicit authored persistence logic.
+
+## Actions, queries, and policies
+
+Actions are mutations declared with `action()`. Queries are reads declared with `query()`. Both have stable names, output schemas, an optional input schema, an authentication requirement, and a transport-independent `run` function.
+
+Runtime execution:
+
+1. validates input,
+2. enforces `public` or `authenticated` access,
+3. executes against `LoomStackRequestContext`, and
+4. validates output.
+
+The request context contains a request ID, optional user, database, and logger. Feature logic must not import Koa. Fine-grained authorization belongs in `permissions.policy.ts` and operation behavior.
+
+## React presentation
+
+Feature views are declared with `view()` from `@loomstack/react`. Views reference named generated queries or actions and render loading, error, and data states. UI files must not access the database or use raw `fetch`; they use generated RPC clients.
+
+Generated route wiring resolves manifest route paths to declared views. Product-specific components and forms remain authored inside their owning feature.
+
+## Koa transport
+
+Koa exposes only named action/query RPC endpoints:
+
+```text
+POST /_loomstack/actions/<actionName>
+POST /_loomstack/queries/<queryName>
+```
+
+The adapter resolves generated registries, creates the request context, executes runtime validation and authentication, and serializes stable error bodies. Unknown operations and non-POST requests return stable framework errors.
+
+## Generation
+
+`loomstack generate` scans authored contracts and deterministically writes:
+
+- React routes and API client
+- Koa route registration
+- feature, schema, action, and query registries
+- context, graph, command, and error documents
+- `.loomstack/generated-files.json`
+
+Generated TypeScript begins with `// GENERATED BY loomstack. DO NOT EDIT.` Generated JSON identifies LoomStack as its generator and marks itself do-not-edit. The hash manifest distinguishes stale output from manual modification. Change authored contracts, regenerate, and never place product behavior in generated files.
+
+## Verification and errors
+
+`loomstack verify` checks project configuration, manifests, route and operation uniqueness, export consistency, architectural boundaries, generated markers, hashes, and freshness. Use feature-scoped verification while iterating and project-wide verification before completion.
+
+Errors have stable codes, messages, repair guidance, and documentation references:
+
+- `loomstack1xxx` — feature contracts
+- `loomstack2xxx` — architecture boundaries
+- `loomstack3xxx` — runtime validation and authentication
+- `loomstack4xxx` — generation and RPC registration
+- `loomstack5xxx` — project and CLI configuration
+- `loomstack6xxx` — PostgreSQL schema support
+
+Run `loomstack explain <code> --json` instead of bypassing a verifier error.
+
+## Agent context
+
+The CLI provides bounded machine-readable discovery:
+
+- `context` for project rules and feature inventory
+- `context feature <name>` for one feature's contracts and files
+- `graph` for routes and feature relationships
+- `affected <file>` for likely companion files and scoped verification
+
+All agent-facing commands support `--json`. The canonical change loop is context → affected → edit authored files → generate → verify → test.
+
+## Testing and proof app
+
+Vitest covers package behavior and feature behavior. [`../examples/manager-crm`](../examples/manager-crm) is the repository integration fixture for generation, verification, and representative vertical slices. Its workspace dependencies resolve to local packages, so it is not a substitute for testing the published npm onboarding flow in a separate directory.
+
+See [`commands.md`](commands.md) for the complete CLI contract.
