@@ -35,7 +35,7 @@ export function createApp(parentInput: string, appName: string): CreateAppResult
     throw new GeneratorFailure([frameworkError("loomstack5002", { message: `Target directory already exists: ${appName}.`, file: appName })])
   }
   mkdirSync(root, { recursive: false })
-  return renderApp(root, appName, [`cd ${appName}`, "pnpm install", "loomstack init"])
+  return renderApp(root, appName, [`cd ${appName}`, "pnpm install", "pnpm loomstack init"])
 }
 
 export function createAppInPlace(rootInput: string): CreateAppResult {
@@ -54,5 +54,5 @@ export function createAppInPlace(rootInput: string): CreateAppResult {
       file: "."
     })])
   }
-  return renderApp(root, appName, ["pnpm install", "loomstack init"])
+  return renderApp(root, appName, ["pnpm install", "pnpm loomstack init"])
 }

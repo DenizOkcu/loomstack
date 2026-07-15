@@ -1,4 +1,4 @@
-import { mkdtempSync, rmSync } from "node:fs"
+import { existsSync, mkdtempSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { afterEach, describe, expect, it } from "vitest"
@@ -16,7 +16,22 @@ function temporaryRoot(): string {
 }
 
 describe("create-loomstack-app", () => {
-  it("creates an application through the npm binary", () => {
+  it("creates an application when npm forwards only the app name", () => {
+    const root = temporaryRoot()
+    const output: string[] = []
+    const code = runCreateLoomStackApp(["weather-app"], {
+      stdout: (text) => output.push(text),
+      stderr: (text) => output.push(text),
+      cwd: () => root
+    })
+
+    expect(code).toBe(0)
+    expect(existsSync(join(root, "weather-app", "package.json"))).toBe(true)
+    expect(output).toContain("Created loomstack app: weather-app")
+    expect(output).toContain("Next: cd weather-app && pnpm install && pnpm loomstack init")
+  })
+
+  it("supports structured creation in an explicit directory", () => {
     const root = temporaryRoot()
     const output: string[] = []
     const code = runCreateLoomStackApp(["demo-app", "--cwd", root, "--json"], {

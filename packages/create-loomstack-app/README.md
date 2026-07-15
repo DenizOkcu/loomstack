@@ -17,22 +17,29 @@ pnpm loomstack init
 
 Use `pnpm loomstack init --no-start` to initialize without starting Docker, or `pnpm loomstack init --skip-install` when dependencies are managed separately.
 
-## Create your first feature
+## Build your first feature with a coding agent
+
+Open the initialized project in your preferred coding agent—for example, Claude Code:
 
 ```bash
-pnpm loomstack create feature people --json
-pnpm loomstack context feature people --json
+claude
+# or: codex
+# or: pi
 ```
 
-Then describe the product behavior to your coding agent:
+Then describe the product behavior you want:
 
 ```text
-Implement the people feature. Users can create people with a name and optional
-job title, list only their own people newest-first, and open the list at /people.
-Read AGENTS.md first. Generate, verify, and test before finishing.
+Read the root AGENTS.md first. Create a new feature named weather using the
+canonical LoomStack workflow, then read the feature-local AGENTS.md before
+editing it. Build a weather app with a UI where users enter a location. Query
+a free online weather API that requires no paid account, persist each requested
+weather response in PostgreSQL, and let users view the returned weather and
+previous searches. Keep API and database access out of the UI. Generate,
+verify, and test the feature before finishing.
 ```
 
-LoomStack gives the agent a deterministic context → edit → generate → verify → test workflow and keeps product behavior in canonical feature slices.
+The agent will use LoomStack's structured context, scaffold the feature, edit only canonical authored files, regenerate wiring, and verify the result. LoomStack keeps product behavior in feature slices while generated files contain wiring only.
 
 ## What gets created
 

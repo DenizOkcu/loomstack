@@ -20,7 +20,7 @@ describe("CLI JSON contract", () => {
     const output = capture()
     expect(await runCli(["--cwd", parent, "create", "app", "demo", "--json"], output.io)).toBe(0)
     const payload = JSON.parse(output.stdout())
-    expect(payload).toMatchObject({ ok: true, appName: "demo", nextCommands: ["cd demo", "pnpm install", "loomstack init"] })
+    expect(payload).toMatchObject({ ok: true, appName: "demo", nextCommands: ["cd demo", "pnpm install", "pnpm loomstack init"] })
     expect(output.stderr()).toBe("")
   })
 

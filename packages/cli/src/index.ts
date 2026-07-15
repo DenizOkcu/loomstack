@@ -254,7 +254,7 @@ export async function runCli(argv: string[], io: CliIO = {
         const started = options.start && dependenciesInstalled
           ? compose("start", ["up", "--detach", "--build", "--wait"])
           : null
-        const examplePrompt = "Build a weather app where users can search for a city, view current conditions, and see a seven-day forecast. Read AGENTS.md first and use the LoomStack workflow."
+        const examplePrompt = "Read the root AGENTS.md first. Create a new feature named weather using the canonical LoomStack workflow, then read the feature-local AGENTS.md before editing it. Build a weather app with a UI where users enter a location. Query a free online weather API that requires no paid account, persist each requested weather response in PostgreSQL, and let users view the returned weather and previous searches. Keep API and database access out of the UI. Generate, verify, and test the feature before finishing."
         return {
           initialized: true,
           projectCreated: Boolean(created),

@@ -21,29 +21,27 @@ pnpm loomstack init
 
 `init` checks the project and starts the web, API, and PostgreSQL containers. Open [http://localhost:3000](http://localhost:3000). Use `pnpm loomstack init --no-start` to set up without starting Docker.
 
-Create a feature, then give your coding agent the product behavior you want:
+Open the project in your preferred coding agent—for example, Claude Code:
 
 ```bash
-pnpm loomstack create feature people --json
-pnpm loomstack context feature people --json
+claude
+# or: codex
+# or: pi
 ```
+
+Then describe the feature you want:
 
 ```text
-Implement the people feature. Users can create people with a name and optional
-job title, list only their own people newest-first, and open the list at /people.
-Read AGENTS.md first. Generate, verify, and test before finishing.
+Read the root AGENTS.md first. Create a new feature named weather using the
+canonical LoomStack workflow, then read the feature-local AGENTS.md before
+editing it. Build a weather app with a UI where users enter a location. Query
+a free online weather API that requires no paid account, persist each requested
+weather response in PostgreSQL, and let users view the returned weather and
+previous searches. Keep API and database access out of the UI. Generate,
+verify, and test the feature before finishing.
 ```
 
-For each change, use the same loop:
-
-```bash
-pnpm loomstack context feature people --json
-pnpm loomstack affected features/people/feature.yaml --json
-# Edit the feature contract, schema, policy, actions, queries, views, and tests.
-pnpm loomstack generate --json
-pnpm loomstack verify feature people --json
-pnpm test
-```
+The coding agent will use LoomStack's structured context, scaffold the feature, edit only canonical authored files, regenerate wiring, and verify the result.
 
 ### Work on the framework
 
