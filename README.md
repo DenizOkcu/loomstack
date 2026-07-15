@@ -6,6 +6,60 @@
 
 loomstack v0.1 has one golden path: TypeScript, pnpm, React + Vite, Koa, PostgreSQL, Zod-backed schemas, and Vitest. It deliberately does not offer alternate adapters or multiple valid application structures.
 
+## Quick start
+
+**Requirements:** Node 22+, pnpm 11+, and Docker Compose.
+
+### Start a new app
+
+From this checkout:
+
+```bash
+pnpm install
+pnpm loomstack create app my-app --json
+cd my-app
+pnpm install
+pnpm loomstack init
+```
+
+> Once the npm package is published, replace the first two commands with `npm create loomstack-app@latest my-app`.
+
+`init` checks the project and starts the web, API, and PostgreSQL containers. Open [http://localhost:3000](http://localhost:3000). Use `pnpm loomstack init --no-start` to set up without starting Docker.
+
+Create a feature, then give your coding agent the product behavior you want:
+
+```bash
+pnpm loomstack create feature people --json
+pnpm loomstack context feature people --json
+```
+
+```text
+Implement the people feature. Users can create people with a name and optional
+job title, list only their own people newest-first, and open the list at /people.
+Read AGENTS.md first. Generate, verify, and test before finishing.
+```
+
+For each change, use the same loop:
+
+```bash
+pnpm loomstack context feature people --json
+pnpm loomstack affected features/people/feature.yaml --json
+# Edit the feature contract, schema, policy, actions, queries, views, and tests.
+pnpm loomstack generate --json
+pnpm loomstack verify feature people --json
+pnpm test
+```
+
+### Work on the framework
+
+```bash
+pnpm install
+pnpm loomstack --cwd examples/manager-crm verify --json
+pnpm test
+pnpm typecheck
+pnpm build
+```
+
 ## The contract
 
 ```text
@@ -17,57 +71,6 @@ generated    = wiring; never hand-edit
 
 Every feature declares its entities, routes, actions, queries, views, permissions, and tests. loomstack generates registries and transport, exposes scoped context to agents, and rejects architecture drift with stable repairable errors.
 
-## Repository quickstart
-
-Requirements: Node 22+ and pnpm 11+.
-
-```bash
-pnpm install
-pnpm test
-pnpm build
-
-# Create and inspect an app from this checkout
-pnpm loomstack create app demo-app
-pnpm loomstack --cwd demo-app create feature people
-pnpm loomstack --cwd demo-app context feature people --json
-pnpm loomstack --cwd demo-app generate
-pnpm loomstack --cwd demo-app verify --json
-```
-
-## Quick start: create and develop an app
-
-Create an app, install it, then initialize the development session:
-
-```bash
-mkdir my-app && cd my-app
-loomstack init
-```
-
-Alternatively, use the npm creator once published: `npm create loomstack-app@latest my-app`.
-
-`loomstack init` validates the project, builds and starts the Docker web/API/database stack, then prints the project path, example CLI agents, and an example feature request. It never launches an agent automatically. Use `--no-start` if containers are already running.
-
-You can then describe product behavior conversationally:
-
-```text
-Implement the people feature. Users can create people with a name and optional
-job title, list only their own people newest-first, and open the list at /people.
-Read AGENTS.md and the feature contract first. Generate and verify before finishing.
-```
-
-The model should follow loomstack's deterministic workflow:
-
-```bash
-pnpm loomstack context feature people --json
-pnpm loomstack affected features/people/feature.yaml --json
-# Edit the feature contract, schema, policy, actions, queries, views, and tests.
-pnpm loomstack generate
-pnpm loomstack verify feature people --json
-pnpm test
-```
-
-The initialized web app runs at `http://localhost:3000` and proxies LoomStack RPC calls to the Koa API on port `3001`; PostgreSQL runs in the same Docker Compose stack. Repeat the same context → edit → generate → verify → test loop for every feature.
-
 ## Agent workflow
 
 For any change, an agent follows one deterministic loop:
@@ -76,7 +79,7 @@ For any change, an agent follows one deterministic loop:
 pnpm loomstack context feature <feature> --json
 pnpm loomstack affected <authored-file> --json
 # edit feature.yaml/schema/action/query/view/test files
-pnpm loomstack generate
+pnpm loomstack generate --json
 pnpm loomstack verify feature <feature> --json
 pnpm test
 ```

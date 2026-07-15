@@ -164,7 +164,7 @@ export async function runCli(argv: string[], io: CliIO = {
   program
     .name("loomstack")
     .description("Agent-operable fullstack framework")
-    .version("0.1.0")
+    .version("0.0.1")
     .option("--json", "emit machine-readable JSON")
     .option("--cwd <path>", "run against a specific path")
     .option("--quiet", "suppress human success output")
